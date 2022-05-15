@@ -37,7 +37,7 @@
 
     jaeger_agent_host: null,
 
-    blocks_storage_backend: 'gcs',  // Available options are 'gcs', 's3', 'azure'
+    blocks_storage_backend: error 'must specify $._config.blocks_storage_backend . Available options are \'gcs\', \'s3\', \'azure\'',
     blocks_storage_bucket_name: error 'must specify blocks storage bucket name',
     blocks_storage_s3_endpoint: 's3.dualstack.us-east-1.amazonaws.com',
     blocks_storage_azure_account_name: if $._config.blocks_storage_backend == 'azure' then error 'must specify azure account name' else '',
