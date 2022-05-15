@@ -32,10 +32,10 @@ fmt:
 		xargs -n 1 -- $(JSONNET_FMT) -i
 
 build-image:
-	docker build -t grafana/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD) build-image
+	docker build -t quay.io/cortexproject/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD) build-image
 
 publish-build-image:
-	docker push grafana/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD)
+	docker push quay.io/cortexproject/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD)
 
 build-mixin:
 	@cd cortex-mixin && \
