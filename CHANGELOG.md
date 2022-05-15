@@ -3,6 +3,8 @@
 ## master / unreleased
 
 * [CHANGE] Updated readme to use this repo with tanka
+* [CHANGE] Removed chunks support
+* [ENHANCEMENT] Added main.jsonnet examples for azure, gcs and s3
 * [ENHANCEMENT] How to rename buckets in AWS and Azure for `not healthy index found` playbook. #5
 
 ## 1.11.0 / 2021-12-30
