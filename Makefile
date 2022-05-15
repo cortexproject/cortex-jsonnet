@@ -44,6 +44,8 @@ build-mixin:
 	mixtool generate all --output-alerts out/alerts.yaml --output-rules out/rules.yaml --directory out/dashboards mixin.libsonnet && \
 	zip -q -r cortex-mixin.zip out
 
+test-readme: test-readme/azure test-readme/gcs test-readme/s3
+
 test-readme/%:
 	rm -rf $@ && \
 	mkdir -p $@ && cd $@ && \
