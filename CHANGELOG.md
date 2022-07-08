@@ -3,6 +3,7 @@
 ## master / unreleased
 
 * [CHANGE] Updated readme to use this repo with tanka
+* [CHANGE] Use integrated cortex overrides exporter
 * [ENHANCEMENT] How to rename buckets in AWS and Azure for `not healthy index found` playbook. #5
 
 ## 1.11.0 / 2021-12-30
