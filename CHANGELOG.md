@@ -2,9 +2,10 @@
 
 ## master / unreleased
 
-* [CHANGE] Updated blocks_storage_s3_endpoint in config.libsonnet to include the correct aws region
+
 * [CHANGE] Updated readme to use this repo with tanka
 * [ENHANCEMENT] How to rename buckets in AWS and Azure for `not healthy index found` playbook. #5
+* [BUGFIX] Updated blocks_storage_s3_endpoint in config.libsonnet to include the correct aws region
 
 ## 1.11.0 / 2021-12-30
 
