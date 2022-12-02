@@ -9,6 +9,7 @@
 * [ENHANCEMENT] How to rename buckets in AWS and Azure for `not healthy index found` playbook. #5
 * [ENHANCEMENT] Support new metrics cortex_cache_fetched_keys_total and cortex_cache_fetched_keys_total
 * [BUGFIX] Updated blocks_storage_s3_endpoint in config.libsonnet to include the correct aws region
+* [BUGFIX] Fixes `-blocks-storage.bucket-store.metadata-cache.memcached.max-idle-connections` for ruler and querier
 
 ## 1.11.0 / 2021-12-30
 
