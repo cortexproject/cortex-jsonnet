@@ -1,6 +1,6 @@
 # Changelog
 
-## master / unreleased
+## 1.11.1 / 2023-01-13
 
 * [CHANGE] Updated readme to use this repo with tanka
 * [CHANGE] Removed chunks support
