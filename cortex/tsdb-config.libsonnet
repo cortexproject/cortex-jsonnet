@@ -26,6 +26,14 @@
     cortex_bucket_index_enabled: false,
   },
 
+  // We should keep a number of idle connections equal to the max "get" concurrency,
+  // in order to avoid re-opening connections continuously (this would be slower
+  // and fill up the conntrack table too).
+  //
+  // The downside of this approach is that we'll end up with an higher number of
+  // active connections to memcached, so we have to make sure connections limit
+  // set in memcached is high enough.
+
   blocks_chunks_caching_config::
     (
       if $._config.memcached_index_queries_enabled then {
@@ -36,6 +44,8 @@
         'blocks-storage.bucket-store.index-cache.memcached.max-async-buffer-size': '25000',
         'blocks-storage.bucket-store.index-cache.memcached.max-async-concurrency': '50',
         'blocks-storage.bucket-store.index-cache.memcached.max-get-multi-batch-size': '100',
+        'blocks-storage.bucket-store.index-cache.memcached.max-get-multi-concurrency': 100,
+        'blocks-storage.bucket-store.index-cache.memcached.max-idle-connections': self['blocks-storage.bucket-store.index-cache.memcached.max-get-multi-concurrency'],
       } else {}
     ) + (
       if $._config.memcached_chunks_enabled then {
@@ -46,6 +56,8 @@
         'blocks-storage.bucket-store.chunks-cache.memcached.max-async-buffer-size': '25000',
         'blocks-storage.bucket-store.chunks-cache.memcached.max-async-concurrency': '50',
         'blocks-storage.bucket-store.chunks-cache.memcached.max-get-multi-batch-size': '100',
+        'blocks-storage.bucket-store.chunks-cache.memcached.max-get-multi-concurrency': 100,
+        'blocks-storage.bucket-store.chunks-cache.memcached.max-idle-connections': self['blocks-storage.bucket-store.chunks-cache.memcached.max-get-multi-concurrency'],
       } else {}
     ),
 
@@ -57,6 +69,8 @@
     'blocks-storage.bucket-store.metadata-cache.memcached.max-async-buffer-size': '25000',
     'blocks-storage.bucket-store.metadata-cache.memcached.max-async-concurrency': '50',
     'blocks-storage.bucket-store.metadata-cache.memcached.max-get-multi-batch-size': '100',
+    'blocks-storage.bucket-store.metadata-cache.memcached.max-get-multi-concurrency': 100,
+    'blocks-storage.bucket-store.metadata-cache.memcached.max-idle-connections': self['blocks-storage.bucket-store.metadata-cache.memcached.max-get-multi-concurrency'],
   } else {},
 
   bucket_index_config:: if $._config.cortex_bucket_index_enabled then {
