@@ -25,7 +25,7 @@ To generate the YAMLs for deploying Cortex:
 
     ```console
     $ mkdir <name> && cd <name>
-    $ tk init --k8s=1.21 # this includes github.com/jsonnet-libs/k8s-libsonnet/1.21@main
+    $ tk init --k8s=1.23 # this includes github.com/jsonnet-libs/k8s-libsonnet/1.23@main
     $ jb install github.com/cortexproject/cortex-jsonnet/cortex@main
     ```
 
