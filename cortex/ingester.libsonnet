@@ -1,5 +1,5 @@
 {
-  local podDisruptionBudget = $.policy.v1beta1.podDisruptionBudget,
+  local podDisruptionBudget = $.policy.v1.podDisruptionBudget,
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
   local volume = $.core.v1.volume,
@@ -90,8 +90,7 @@
   ingester_service_ignored_labels:: [],
 
   newIngesterPdb(pdbName, ingesterName)::
-    podDisruptionBudget.new() +
-    podDisruptionBudget.mixin.metadata.withName(pdbName) +
+    podDisruptionBudget.new(pdbName) +
     podDisruptionBudget.mixin.metadata.withLabels({ name: pdbName }) +
     podDisruptionBudget.mixin.spec.selector.withMatchLabels({ name: ingesterName }) +
     podDisruptionBudget.mixin.spec.withMaxUnavailable(1),

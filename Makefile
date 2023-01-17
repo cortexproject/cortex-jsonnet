@@ -49,7 +49,7 @@ test-readme: test-readme/azure test-readme/gcs test-readme/s3
 test-readme/%:
 	rm -rf $@ && \
 	mkdir -p $@ && cd $@ && \
-	tk init --k8s=1.21 && \
+	tk init --k8s=1.23 && \
 	jb install github.com/cortexproject/cortex-jsonnet/cortex@main && \
 	rm -fr ./vendor/cortex && \
 	cp -r ../../cortex ./vendor/ && \

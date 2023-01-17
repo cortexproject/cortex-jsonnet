@@ -1,6 +1,6 @@
 {
   local container = $.core.v1.container,
-  local podDisruptionBudget = $.policy.v1beta1.podDisruptionBudget,
+  local podDisruptionBudget = $.policy.v1.podDisruptionBudget,
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
   local volumeMount = $.core.v1.volumeMount,
@@ -69,8 +69,7 @@
     $.util.serviceFor($.store_gateway_statefulset),
 
   store_gateway_pdb:
-    podDisruptionBudget.new() +
-    podDisruptionBudget.mixin.metadata.withName('store-gateway-pdb') +
+    podDisruptionBudget.new('store-gateway-pdb') +
     podDisruptionBudget.mixin.metadata.withLabels({ name: 'store-gateway-pdb' }) +
     podDisruptionBudget.mixin.spec.selector.withMatchLabels({ name: 'store-gateway' }) +
     // To avoid any disruption in the read path we need at least 1 replica of each
