@@ -9,7 +9,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:e63d87f
     steps:
       - uses: actions/checkout@v2
         name: Checkout
@@ -23,7 +23,7 @@ jobs:
         run: make lint-playbooks
   build:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:e63d87f
     steps:
       - uses: actions/checkout@v2
         name: Checkout
@@ -34,7 +34,7 @@ jobs:
         run: make build-mixin
   readme:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:e63d87f
     steps:
       - uses: actions/checkout@v2
         name: Checkout
@@ -42,4 +42,4 @@ jobs:
           fetch-depth: 0
       
       - name: "Test readme"
-        run: make test-readme    
+        run: make test-readme
