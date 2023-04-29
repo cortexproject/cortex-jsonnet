@@ -2,6 +2,8 @@
 
 ## master / unreleased
 
+## 1.13.2 / 2023-04-29
+
 * [CHANGE] Use policy/v1 PodDisruptionBudget to support k8s 1.25+
 
 ## 1.11.1 / 2023-01-13
