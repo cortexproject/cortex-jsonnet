@@ -26,8 +26,8 @@ RUN echo "${TANKA_CHECKSUM}" | sha256sum -c || (printf "wanted: %s\n   got: %s\n
 RUN chmod +x /usr/bin/tk
 
 # Build mixtool
-FROM golang:1.15-alpine AS mixtool-builder
-RUN GO111MODULE=on go get github.com/monitoring-mixins/mixtool/cmd/mixtool@ae18e31161ea10545b9c1ac0d23c10122f2c12b5
+FROM golang:1.20-alpine AS mixtool-builder
+RUN GO111MODULE=on go install github.com/monitoring-mixins/mixtool/cmd/mixtool@ae18e31161ea10545b9c1ac0d23c10122f2c12b5
 
 FROM alpine:3.17
 RUN apk add --no-cache git make libgcc libstdc++ zip findutils sed yq
