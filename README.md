@@ -17,7 +17,7 @@ To generate the YAMLs for deploying Cortex:
 
     ```console
     $ # make sure to be outside of GOPATH or a go.mod project
-    $ GO111MODULE=on go install github.com/grafana/tanka/cmd/tk@v0.21.0
+    $ GO111MODULE=on go install github.com/grafana/tanka/cmd/tk@v0.24.0
     $ GO111MODULE=on go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.5.1
     ```
 
