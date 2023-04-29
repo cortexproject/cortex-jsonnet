@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
       - name: "Lint playbooks"
         run: make lint-playbooks
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
       - name: "Build mixin"
         run: make build-mixin
   readme:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:c924d52
     steps:
       - uses: actions/checkout@v2
