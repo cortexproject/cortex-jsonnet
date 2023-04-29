@@ -9,8 +9,8 @@ RUN git clone https://github.com/google/jsonnet && \
 
 # Build jb
 FROM alpine:3.17 AS jb-builder
-ARG JSONNET_BUNDLER_VERSION=0.4.0
-ARG JSONNET_BUNDLER_CHECKSUM="433edab5554a88a0371e11e93080408b225d41c31decf321c02b50d2e44993ce  /usr/bin/jb"
+ARG JSONNET_BUNDLER_VERSION=0.5.1
+ARG JSONNET_BUNDLER_CHECKSUM="f5bccc94d28fbbe8ad1d46fd4f208619e45d368a5d7924f6335f4ecfa0605c85  /usr/bin/jb"
 RUN apk add --no-cache curl
 RUN curl -fSL -o "/usr/bin/jb" "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v${JSONNET_BUNDLER_VERSION}/jb-linux-amd64"
 RUN echo "${JSONNET_BUNDLER_CHECKSUM}" | sha256sum -c || (printf "wanted: %s\n   got: %s\n" "${JSONNET_BUNDLER_CHECKSUM}" "$(sha256sum /usr/bin/jb)"; exit 1)

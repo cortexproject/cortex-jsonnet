@@ -18,7 +18,7 @@ To generate the YAMLs for deploying Cortex:
     ```console
     $ # make sure to be outside of GOPATH or a go.mod project
     $ GO111MODULE=on go install github.com/grafana/tanka/cmd/tk@v0.21.0
-    $ GO111MODULE=on go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.4.0
+    $ GO111MODULE=on go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.5.1
     ```
 
 1. Initialise the Tanka repo, install the Cortex and Kubernetes Jsonnet libraries.
@@ -68,7 +68,7 @@ To generate the Grafana dashboards and Prometheus alerts for Cortex:
 
 ```console
 $ GO111MODULE=on go install github.com/monitoring-mixins/mixtool/cmd/mixtool@2ff523ea63d1cdeee2a10e01d1d48d20adcc7030
-$ GO111MODULE=on go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.4.0
+$ GO111MODULE=on go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@v0.5.1
 $ git clone https://github.com/cortexproject/cortex-jsonnet
 $ cd cortex-jsonnet
 $ make build-mixin
