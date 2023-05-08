@@ -3,6 +3,7 @@
 ## master / unreleased
 
 * [CHANGE] Enables query-scheduler by default
+* [CHANGE] Enables bucket-index by default
 
 ## 1.13.2 / 2023-04-29
 
