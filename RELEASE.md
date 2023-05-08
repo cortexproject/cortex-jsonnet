@@ -27,7 +27,7 @@ A release of `cortex-jsonnet` should follow shortly after a release of Cortex.
    $ make build-mixin
    ```
 7. Add the `cortex-mixin/cortex-mixin.zip` and release change log to the GitHub release.
-   - Edit the release in GitHub by going to https://github.com/grafana/cortex-jsonnet/releases/edit/x.y.z
+   - Edit the release in GitHub by going to https://github.com/cortexproject/cortex-jsonnet/releases/edit/x.y.z
 
 ### How to tag a release
 
