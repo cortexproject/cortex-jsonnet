@@ -2,6 +2,7 @@
 
 ## master / unreleased
 
+* [CHANGE] Use faster disks for compactor
 * [CHANGE] Enables query-scheduler by default
 * [CHANGE] Enables bucket-index by default
 
