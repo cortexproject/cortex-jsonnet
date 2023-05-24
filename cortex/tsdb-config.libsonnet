@@ -14,7 +14,7 @@
 
     // Allow to configure the compactor disk.
     cortex_compactor_data_disk_size: '250Gi',
-    cortex_compactor_data_disk_class: 'standard',
+    cortex_compactor_data_disk_class: 'fast',
 
     // Allow to fine tune compactor.
     cortex_compactor_max_concurrency: 1,
