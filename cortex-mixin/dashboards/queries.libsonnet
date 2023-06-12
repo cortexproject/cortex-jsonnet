@@ -254,7 +254,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
       $.row('')
       .addPanel(
         $.panel('Blocks currently loaded') +
-        $.queryPanel('cortex_bucket_store_blocks_loaded{component="store-gateway",%s}' % $.jobMatcher($._config.job_names.store_gateway), '{{%s}}' % $._config.per_instance_label)
+        $.queryPanel('sum(cortex_bucket_store_blocks_loaded{component="store-gateway",%s}) without (user)' % $.jobMatcher($._config.job_names.store_gateway), '{{%s}}' % $._config.per_instance_label)
       )
       .addPanel(
         $.successFailurePanel(
