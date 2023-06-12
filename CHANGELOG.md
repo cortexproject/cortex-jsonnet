@@ -5,6 +5,7 @@
 * [CHANGE] Use faster disks for compactor
 * [CHANGE] Enables query-scheduler by default
 * [CHANGE] Enables bucket-index by default
+* [BUGFIX] Fix `Blocks currently loaded` in Queries
 
 ## 1.13.2 / 2023-04-29
 
