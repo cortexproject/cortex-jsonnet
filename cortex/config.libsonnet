@@ -98,6 +98,7 @@
       'blocks-storage.azure.container-name': $._config.blocks_storage_bucket_name,
       'blocks-storage.azure.account-name': $._config.blocks_storage_azure_account_name,
       'blocks-storage.azure.account-key': $._config.blocks_storage_azure_account_key,
+      'blocks-storage.azure.endpoint-suffix': 'blob.core.windows.net',
     },
 
     blocksStorageConfig:
@@ -164,6 +165,7 @@
           'ruler-storage.azure.container-name': $._config.ruler_storage_bucket_name,
           'ruler-storage.azure.account-name': $._config.ruler_storage_azure_account_name,
           'ruler-storage.azure.account-key': $._config.ruler_storage_azure_account_key,
+          'ruler-storage.azure.endpoint-suffix': 'blob.core.windows.net',
         },
         'local': {
           'ruler-storage.local.directory': $._config.ruler_local_directory,
@@ -194,6 +196,7 @@
           'alertmanager-storage.azure.account-key': $._config.alertmanager_azure_account_key,
           'alertmanager-storage.azure.account-name': $._config.alertmanager_azure_account_name,
           'alertmanager-storage.azure.container-name': $._config.alertmanager_azure_container_name,
+          'alertmanager-storage.azure.endpoint-suffix': 'blob.core.windows.net',
         },
         gcs: {
           'alertmanager-storage.gcs.bucket-name': $._config.alertmanager_gcs_bucket_name,
