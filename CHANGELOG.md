@@ -1,5 +1,9 @@
 # Changelog
 
+## master / unreleased
+* [CHANGE] Use cortex v1.15.3
+* [CHANGE] Azure storage endpoint suffix is set to `blob.core.windows.net` for backward compatibility
+
 ## 1.14.1 / 2023-07-11
 
 * [CHANGE] Use faster disks for compactor
