@@ -36,24 +36,13 @@
 
       'blocks-storage.tsdb.dir': '/data/tsdb',
       'blocks-storage.tsdb.block-ranges-period': '2h',
+      'blocks-storage.tsdb.head-chunks-write-queue-size': 1e6,
       'blocks-storage.tsdb.retention-period': '96h',  // 4 days protection against blocks not being uploaded from ingesters.
       'blocks-storage.tsdb.ship-interval': '1m',
 
       // Persist ring tokens so that when the ingester will be restarted
       // it will pick the same tokens
       'ingester.tokens-file-path': '/data/tokens',
-    },
-
-  ingester_statefulset_args::
-    $._config.grpcConfig
-    {
-      'ingester.wal-enabled': true,
-      'ingester.checkpoint-enabled': true,
-      'ingester.recover-from-wal': true,
-      'ingester.wal-dir': $._config.ingester.wal_dir,
-      'ingester.checkpoint-duration': '15m',
-      '-log.level': 'info',
-      'ingester.tokens-file-path': $._config.ingester.wal_dir + '/tokens',
     },
 
   ingester_ports:: $.util.defaultPorts,
@@ -71,13 +60,6 @@
     $.jaeger_mixin,
 
   local volumeMount = $.core.v1.volumeMount,
-
-  ingester_statefulset_container::
-    $.ingester_container +
-    container.withArgsMixin($.util.mapToFlags($.ingester_statefulset_args)) +
-    container.withVolumeMountsMixin([
-      volumeMount.new('ingester-pvc', $._config.ingester.wal_dir),
-    ]),
 
   ingester_deployment_labels:: {},
 
