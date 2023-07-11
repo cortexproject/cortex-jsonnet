@@ -1,6 +1,6 @@
 # Changelog
 
-## master / unreleased
+## 1.14.1 / 2023-07-11
 
 * [CHANGE] Use faster disks for compactor
 * [CHANGE] Enables query-scheduler by default
