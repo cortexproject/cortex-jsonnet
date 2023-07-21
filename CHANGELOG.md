@@ -1,6 +1,7 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Add default tenant shard sizes
 * [CHANGE] Use cortex v1.15.3
 * [CHANGE] Azure storage endpoint suffix is set to `blob.core.windows.net` for backward compatibility
 
