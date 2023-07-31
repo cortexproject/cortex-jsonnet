@@ -260,6 +260,8 @@
 
         // No retention for now.
         compactor_blocks_retention_period: '0',
+
+        ingestion_tenant_shard_size: 3,
       },
 
       medium_small_user:: {
@@ -277,6 +279,8 @@
         // 1000 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 50,
+
+        ingestion_tenant_shard_size: 9,
       },
 
       small_user:: {
@@ -294,6 +298,8 @@
         // 1400 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 70,
+
+        ingestion_tenant_shard_size: 15,
       },
 
       medium_user:: {
@@ -311,6 +317,8 @@
         // 1800 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 90,
+
+        ingestion_tenant_shard_size: 30,
       },
 
       big_user:: {
@@ -328,6 +336,8 @@
         // 2200 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 110,
+
+        ingestion_tenant_shard_size: 60,
       },
 
       super_user:: {
@@ -345,6 +355,8 @@
         // 2600 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 130,
+
+        ingestion_tenant_shard_size: 120,
       },
 
       // This user class has limits increased by +50% compared to the previous one.
@@ -363,6 +375,8 @@
         // 3000 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 150,
+
+        ingestion_tenant_shard_size: 180,
       },
     },
 
