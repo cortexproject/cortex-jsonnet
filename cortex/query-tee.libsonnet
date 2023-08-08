@@ -18,8 +18,14 @@
       containerPort.newNamed(name='http-metrics', containerPort=9900),
     ]) +
     container.withArgsMixin($.util.mapToFlags($.query_tee_args)) +
+    container.withEnvMap($.query_tee_env_map) +
     $.util.resourcesRequests('1', '512Mi') +
     $.jaeger_mixin,
+
+  query_tee_env_map:: {
+    GOMAXPROCS: '1',
+    GOMEMLIMIT: '512MiB',
+  },
 
   query_tee_deployment: if !($._config.query_tee_enabled) then {} else
     deployment.new('query-tee', 2, [$.query_tee_container]),

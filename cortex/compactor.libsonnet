@@ -43,12 +43,18 @@
     container.new('compactor', $._images.compactor) +
     container.withPorts($.compactor_ports) +
     container.withArgsMixin($.util.mapToFlags($.compactor_args)) +
+    container.withEnvMap($.compactor_env_map) +
     container.withVolumeMountsMixin([volumeMount.new('compactor-data', '/data')]) +
     // Do not limit compactor CPU and request enough cores to honor configured max concurrency.
     $.util.resourcesRequests($._config.cortex_compactor_max_concurrency, '6Gi') +
     $.util.resourcesLimits(null, '6Gi') +
     $.util.readinessProbe +
     $.jaeger_mixin,
+
+  compactor_env_map:: {
+    GOMAXPROCS: std.toString($._config.cortex_compactor_max_concurrency),
+    GOMEMLIMIT: '6GiB',
+  },
 
   newCompactorStatefulSet(name, container)::
     statefulSet.new(name, 1, [container], compactor_data_pvc) +

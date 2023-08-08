@@ -26,16 +26,14 @@
       'querier.frontend-address': 'query-frontend-discovery.%(namespace)s.svc.cluster.local:9095' % $._config,
       'querier.frontend-client.grpc-max-send-msg-size': 100 << 20,
 
-      // We request high memory but the Go heap is typically very low (< 100MB) and this causes
-      // the GC to trigger continuously. Setting a ballast of 256MB reduces GC.
-      'mem-ballast-size-bytes': 1 << 28,  // 256M
-
       'log.level': 'debug',
     },
 
   querier_ports:: $.util.defaultPorts,
 
   querier_env_map:: {
+    GOMAXPROCS: '2',
+    GOMEMLIMIT: '12Gi',
     JAEGER_REPORTER_MAX_QUEUE_SIZE: '1024',  // Default is 100.
   },
 
@@ -46,7 +44,7 @@
     $.jaeger_mixin +
     $.util.readinessProbe +
     container.withEnvMap($.querier_env_map) +
-    $.util.resourcesRequests('1', '12Gi') +
+    $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '24Gi'),
 
   local deployment = $.apps.v1.deployment,

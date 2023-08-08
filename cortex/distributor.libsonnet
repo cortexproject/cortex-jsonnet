@@ -20,11 +20,6 @@
       'distributor.ha-tracker.etcd.endpoints': 'etcd-client.%s.svc.cluster.local.:2379' % $._config.namespace,
       'distributor.ha-tracker.prefix': 'prom_ha/',
 
-      // The memory requests are 2G, and we barely use 100M.
-      // By adding a ballast of 1G, we can drastically reduce GC, but also keep the usage at
-      // around 1.25G, reducing the 99%ile.
-      'mem-ballast-size-bytes': 1 << 30,  // 1GB
-
       'server.grpc.keepalive.max-connection-age': '2m',
       'server.grpc.keepalive.max-connection-age-grace': '5m',
       'server.grpc.keepalive.max-connection-idle': '1m',
@@ -38,12 +33,18 @@
       'distributor.extend-writes': $._config.unregister_ingesters_on_shutdown,
     },
 
+  distributor_env_map:: {
+    GOMAXPROCS: '2',
+    GOMEMLIMIT: '2GiB',
+  },
+
   distributor_ports:: $.util.defaultPorts,
 
   distributor_container::
     container.new('distributor', $._images.distributor) +
     container.withPorts($.distributor_ports) +
     container.withArgsMixin($.util.mapToFlags($.distributor_args)) +
+    container.withEnvMap($.distributor_env_map) +
     $.util.resourcesRequests('2', '2Gi') +
     $.util.resourcesLimits(null, '4Gi') +
     $.util.readinessProbe +

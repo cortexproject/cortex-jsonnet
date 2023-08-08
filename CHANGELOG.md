@@ -1,6 +1,9 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Remove mem-ballast from distributor and querier.
+* [CHANGE] Increase cpu requests for querier to 2.
+* [CHANGE] Configure default GOMAXPROCS and GOMEMLIMIT for all cortex modules
 * [CHANGE] Add default tenant shard sizes
 * [CHANGE] Use cortex v1.15.3
 * [CHANGE] Azure storage endpoint suffix is set to `blob.core.windows.net` for backward compatibility

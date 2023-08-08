@@ -42,10 +42,16 @@
     container.new('query-frontend', $._images.query_frontend) +
     container.withPorts($.util.defaultPorts) +
     container.withArgsMixin($.util.mapToFlags($.query_frontend_args)) +
+    container.withEnvMap($.query_frontend_env_map) +
     $.jaeger_mixin +
     $.util.readinessProbe +
     $.util.resourcesRequests('2', '600Mi') +
     $.util.resourcesLimits(null, '1200Mi'),
+
+  query_frontend_env_map:: {
+    GOMAXPROCS: '2',
+    GOMEMLIMIT: '600MiB',
+  },
 
   local deployment = $.apps.v1.deployment,
 

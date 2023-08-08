@@ -38,6 +38,7 @@
       container.new('ruler', $._images.ruler) +
       container.withPorts($.util.defaultPorts) +
       container.withArgsMixin($.util.mapToFlags($.ruler_args)) +
+      container.withEnvMap($.ruler_env_map) +
       $.util.resourcesRequests('1', '6Gi') +
       $.util.resourcesLimits('16', '16Gi') +
       $.util.readinessProbe +
@@ -55,6 +56,11 @@
       (if $._config.cortex_ruler_allow_multiple_replicas_on_same_node then {} else $.util.antiAffinity) +
       $.util.configVolumeMount($._config.overrides_configmap, '/etc/cortex')
     else {},
+
+  ruler_env_map:: {
+    GOMAXPROCS: '2',
+    GOMEMLIMIT: '6GiB',
+  },
 
   local service = $.core.v1.service,
 
