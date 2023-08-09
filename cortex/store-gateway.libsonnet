@@ -40,11 +40,17 @@
     container.new('store-gateway', $._images.store_gateway) +
     container.withPorts($.store_gateway_ports) +
     container.withArgsMixin($.util.mapToFlags($.store_gateway_args)) +
+    container.withEnvMap($.store_gateway_env_map) +
     container.withVolumeMountsMixin([volumeMount.new('store-gateway-data', '/data')]) +
     $.util.resourcesRequests('1', '12Gi') +
     $.util.resourcesLimits(null, '18Gi') +
     $.util.readinessProbe +
     $.jaeger_mixin,
+
+  store_gateway_env_map:: {
+    GOMAXPROCS: '2',
+    GOMEMLIMIT: '12GiB',
+  },
 
   newStoreGatewayStatefulSet(name, container)::
     statefulSet.new(name, 3, [container], store_gateway_data_pvc) +

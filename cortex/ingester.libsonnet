@@ -3,6 +3,7 @@
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
   local volume = $.core.v1.volume,
+  local volumeMount = $.core.v1.volumeMount,
 
   // The ingesters should persist TSDB blocks and WAL on a persistent
   // volume in order to be crash resilient.
@@ -44,18 +45,6 @@
       'ingester.tokens-file-path': '/data/tokens',
     },
 
-  ingester_statefulset_args::
-    $._config.grpcConfig
-    {
-      'ingester.wal-enabled': true,
-      'ingester.checkpoint-enabled': true,
-      'ingester.recover-from-wal': true,
-      'ingester.wal-dir': $._config.ingester.wal_dir,
-      'ingester.checkpoint-duration': '15m',
-      '-log.level': 'info',
-      'ingester.tokens-file-path': $._config.ingester.wal_dir + '/tokens',
-    },
-
   ingester_ports:: $.util.defaultPorts,
 
   local name = 'ingester',
@@ -65,21 +54,18 @@
     container.new(name, $._images.ingester) +
     container.withPorts($.ingester_ports) +
     container.withArgsMixin($.util.mapToFlags($.ingester_args)) +
+    container.withEnvMap($.ingester_env_map) +
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
     $.jaeger_mixin,
 
-  local volumeMount = $.core.v1.volumeMount,
-
-  ingester_statefulset_container::
-    $.ingester_container +
-    container.withArgsMixin($.util.mapToFlags($.ingester_statefulset_args)) +
-    container.withVolumeMountsMixin([
-      volumeMount.new('ingester-pvc', $._config.ingester.wal_dir),
-    ]),
-
   ingester_deployment_labels:: {},
+
+  ingester_env_map:: {
+    GOMAXPROCS: '4',
+    GOMEMLIMIT: '15GiB',
+  },
 
   local ingester_pvc =
     pvc.new('ingester-pvc') +

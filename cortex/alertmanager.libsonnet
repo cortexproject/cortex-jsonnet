@@ -96,6 +96,7 @@
     if $._config.alertmanager_enabled then
       container.new('alertmanager', $._images.alertmanager) +
       container.withPorts($.util.defaultPorts + mode.ports) +
+      container.withEnvMap($.alertmanager_env_map) +
       container.withEnvMixin([container.envType.fromFieldPath('POD_IP', 'status.podIP')]) +
       container.withArgsMixin(
         $.util.mapToFlags($.alertmanager_args) +
@@ -111,6 +112,11 @@
       $.util.readinessProbe +
       $.jaeger_mixin
     else {},
+
+  alertmanager_env_map:: {
+    GOMAXPROCS: '1',
+    GOMEMLIMIT: '1GiB',
+  },
 
   alertmanager_statefulset:
     if $._config.alertmanager_enabled then
