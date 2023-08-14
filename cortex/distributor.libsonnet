@@ -31,6 +31,7 @@
       // Do not extend the replication set on unhealthy (or LEAVING) ingester when "unregister on shutdown"
       // is set to false.
       'distributor.extend-writes': $._config.unregister_ingesters_on_shutdown,
+      'distributor.instance-limits.max-inflight-push-requests': 60,  //60 is very conservative to protect the distributor from OOMs
     },
 
   distributor_env_map:: {

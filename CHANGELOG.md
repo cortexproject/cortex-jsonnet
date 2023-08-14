@@ -1,6 +1,8 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Add default instance max series for ingesters
+* [CHANGE] Add default instance max inflight pushes for distributors
 * [CHANGE] Remove mem-ballast from distributor and querier.
 * [CHANGE] Increase cpu requests for querier to 2.
 * [CHANGE] Configure default GOMAXPROCS and GOMEMLIMIT for all cortex modules
