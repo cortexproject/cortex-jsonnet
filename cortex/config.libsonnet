@@ -395,13 +395,12 @@
     ingester_stream_chunks_when_using_blocks: true,
 
     // Ingester limits are put directly into runtime config, if not null. Available limits:
-    //    ingester_instance_limits: {
-    //      max_inflight_push_requests: 0,  // Max inflight push requests per ingester. 0 = no limit.
-    //      max_ingestion_rate: 0,  // Max ingestion rate (samples/second) per ingester. 0 = no limit.
-    //      max_series: 0,  // Max number of series per ingester. 0 = no limit.
-    //      max_tenants: 0,  // Max number of tenants per ingester. 0 = no limit.
-    //    },
-    ingester_instance_limits: null,
+    ingester_instance_limits: {
+      // max_inflight_push_requests: 0,  // Max inflight push requests per ingester. 0 = no limit.
+      // max_ingestion_rate: 0,  // Max ingestion rate (samples/second) per ingester. 0 = no limit.
+      max_series: 4.8e+6,  // Max number of series per ingester. 0 = no limit. 4.8 million is closely tied to 15Gb in requests per ingester
+      // max_tenants: 0,  // Max number of tenants per ingester. 0 = no limit.
+    },
   },
 
   local configMap = $.core.v1.configMap,
