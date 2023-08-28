@@ -53,7 +53,7 @@
 
   compactor_env_map:: {
     GOMAXPROCS: std.toString($._config.cortex_compactor_max_concurrency),
-    GOMEMLIMIT: '6GiB',
+    GOMEMLIMIT: '5GiB',
   },
 
   newCompactorStatefulSet(name, container)::
