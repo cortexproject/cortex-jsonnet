@@ -33,7 +33,7 @@
 
   querier_env_map:: {
     GOMAXPROCS: '2',
-    GOMEMLIMIT: '12Gi',
+    GOMEMLIMIT: '12GiB',
     JAEGER_REPORTER_MAX_QUEUE_SIZE: '1024',  // Default is 100.
   },
 
