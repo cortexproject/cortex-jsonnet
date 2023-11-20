@@ -2,6 +2,7 @@
   local container = $.core.v1.container,
   local containerPort = $.core.v1.containerPort,
   local deployment = $.apps.v1.deployment,
+  local envType = container.envType,
   local service = $.core.v1.service,
   local servicePort = $.core.v1.servicePort,
 
@@ -19,12 +20,16 @@
     ]) +
     container.withArgsMixin($.util.mapToFlags($.query_tee_args)) +
     container.withEnvMap($.query_tee_env_map) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     $.util.resourcesRequests('1', '512Mi') +
     $.jaeger_mixin,
 
   query_tee_env_map:: {
-    GOMAXPROCS: '1',
-    GOMEMLIMIT: '512MiB',
   },
 
   query_tee_deployment: if !($._config.query_tee_enabled) then {} else
