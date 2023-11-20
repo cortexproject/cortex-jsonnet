@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   querier_args::
     $._config.grpcConfig +
@@ -32,8 +33,6 @@
   querier_ports:: $.util.defaultPorts,
 
   querier_env_map:: {
-    GOMAXPROCS: '2',
-    GOMEMLIMIT: '12GiB',
     JAEGER_REPORTER_MAX_QUEUE_SIZE: '1024',  // Default is 100.
   },
 
@@ -44,6 +43,12 @@
     $.jaeger_mixin +
     $.util.readinessProbe +
     container.withEnvMap($.querier_env_map) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '24Gi'),
 

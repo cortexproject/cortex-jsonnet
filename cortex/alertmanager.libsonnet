@@ -3,6 +3,7 @@
   local volumeMount = $.core.v1.volumeMount,
   local volume = $.core.v1.volume,
   local container = $.core.v1.container,
+  local envType = container.envType,
   local statefulSet = $.apps.v1.statefulSet,
   local service = $.core.v1.service,
   local configMap = $.core.v1.configMap,
@@ -98,6 +99,12 @@
       container.withPorts($.util.defaultPorts + mode.ports) +
       container.withEnvMap($.alertmanager_env_map) +
       container.withEnvMixin([container.envType.fromFieldPath('POD_IP', 'status.podIP')]) +
+      container.withEnvMixin([
+        envType.withName('GOMAXPROCS') +
+        envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+        envType.withName('GOMEMLIMIT') +
+        envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+      ]) +
       container.withArgsMixin(
         $.util.mapToFlags($.alertmanager_args) +
         mode.flags
@@ -108,14 +115,12 @@
           [volumeMount.new('alertmanager-fallback-config', '/configs')]
         else []
       ) +
-      $.util.resourcesRequests('100m', '1Gi') +
+      $.util.resourcesRequests('1', '1Gi') +
       $.util.readinessProbe +
       $.jaeger_mixin
     else {},
 
   alertmanager_env_map:: {
-    GOMAXPROCS: '1',
-    GOMEMLIMIT: '1GiB',
   },
 
   alertmanager_statefulset:

@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
   local containerPort = $.core.v1.containerPort,
 
   distributor_args::
@@ -35,8 +36,6 @@
     },
 
   distributor_env_map:: {
-    GOMAXPROCS: '2',
-    GOMEMLIMIT: '2GiB',
   },
 
   distributor_ports:: $.util.defaultPorts,
@@ -45,6 +44,12 @@
     container.new('distributor', $._images.distributor) +
     container.withPorts($.distributor_ports) +
     container.withArgsMixin($.util.mapToFlags($.distributor_args)) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     container.withEnvMap($.distributor_env_map) +
     $.util.resourcesRequests('2', '2Gi') +
     $.util.resourcesLimits(null, '4Gi') +

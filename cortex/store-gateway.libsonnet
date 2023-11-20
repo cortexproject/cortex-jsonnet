@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
   local podDisruptionBudget = $.policy.v1.podDisruptionBudget,
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
@@ -41,15 +42,19 @@
     container.withPorts($.store_gateway_ports) +
     container.withArgsMixin($.util.mapToFlags($.store_gateway_args)) +
     container.withEnvMap($.store_gateway_env_map) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     container.withVolumeMountsMixin([volumeMount.new('store-gateway-data', '/data')]) +
-    $.util.resourcesRequests('1', '12Gi') +
+    $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '18Gi') +
     $.util.readinessProbe +
     $.jaeger_mixin,
 
   store_gateway_env_map:: {
-    GOMAXPROCS: '2',
-    GOMEMLIMIT: '12GiB',
   },
 
   newStoreGatewayStatefulSet(name, container)::

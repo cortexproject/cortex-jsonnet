@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   query_frontend_args::
     $._config.grpcConfig
@@ -43,14 +44,18 @@
     container.withPorts($.util.defaultPorts) +
     container.withArgsMixin($.util.mapToFlags($.query_frontend_args)) +
     container.withEnvMap($.query_frontend_env_map) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     $.jaeger_mixin +
     $.util.readinessProbe +
     $.util.resourcesRequests('2', '600Mi') +
     $.util.resourcesLimits(null, '1200Mi'),
 
   query_frontend_env_map:: {
-    GOMAXPROCS: '2',
-    GOMEMLIMIT: '600MiB',
   },
 
   local deployment = $.apps.v1.deployment,

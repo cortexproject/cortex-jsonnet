@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   ruler_args::
     $._config.grpcConfig +
@@ -39,7 +40,13 @@
       container.withPorts($.util.defaultPorts) +
       container.withArgsMixin($.util.mapToFlags($.ruler_args)) +
       container.withEnvMap($.ruler_env_map) +
-      $.util.resourcesRequests('1', '6Gi') +
+      container.withEnvMixin([
+        envType.withName('GOMAXPROCS') +
+        envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+        envType.withName('GOMEMLIMIT') +
+        envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+      ]) +
+      $.util.resourcesRequests('2', '6Gi') +
       $.util.resourcesLimits('16', '16Gi') +
       $.util.readinessProbe +
       $.jaeger_mixin
@@ -58,8 +65,6 @@
     else {},
 
   ruler_env_map:: {
-    GOMAXPROCS: '2',
-    GOMEMLIMIT: '6GiB',
   },
 
   local service = $.core.v1.service,

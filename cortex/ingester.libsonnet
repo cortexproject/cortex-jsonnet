@@ -49,12 +49,19 @@
 
   local name = 'ingester',
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   ingester_container::
     container.new(name, $._images.ingester) +
     container.withPorts($.ingester_ports) +
     container.withArgsMixin($.util.mapToFlags($.ingester_args)) +
     container.withEnvMap($.ingester_env_map) +
+    container.withEnvMixin([
+      envType.withName('GOMAXPROCS') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
+      envType.withName('GOMEMLIMIT') +
+      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
+    ]) +
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
@@ -63,8 +70,6 @@
   ingester_deployment_labels:: {},
 
   ingester_env_map:: {
-    GOMAXPROCS: '4',
-    GOMEMLIMIT: '15GiB',
   },
 
   local ingester_pvc =
