@@ -56,15 +56,10 @@
     container.withPorts($.ingester_ports) +
     container.withArgsMixin($.util.mapToFlags($.ingester_args)) +
     container.withEnvMap($.ingester_env_map) +
-    container.withEnvMixin([
-      envType.withName('GOMAXPROCS') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-      envType.withName('GOMEMLIMIT') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-    ]) +
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     $.jaeger_mixin,
 
   ingester_deployment_labels:: {},

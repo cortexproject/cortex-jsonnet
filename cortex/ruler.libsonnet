@@ -40,12 +40,7 @@
       container.withPorts($.util.defaultPorts) +
       container.withArgsMixin($.util.mapToFlags($.ruler_args)) +
       container.withEnvMap($.ruler_env_map) +
-      container.withEnvMixin([
-        envType.withName('GOMAXPROCS') +
-        envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-        envType.withName('GOMEMLIMIT') +
-        envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-      ]) +
+      $.go_container_mixin +
       $.util.resourcesRequests('2', '6Gi') +
       $.util.resourcesLimits('16', '16Gi') +
       $.util.readinessProbe +

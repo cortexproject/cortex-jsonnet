@@ -25,11 +25,10 @@
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     $.jaeger_mixin,
 
   flusher_env_map:: {
-    GOMAXPROCS: '4',
-    GOMEMLIMIT: '15GiB',
   },
 
   flusher_job_func(jobName, pvcName)::

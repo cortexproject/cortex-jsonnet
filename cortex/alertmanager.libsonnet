@@ -99,12 +99,6 @@
       container.withPorts($.util.defaultPorts + mode.ports) +
       container.withEnvMap($.alertmanager_env_map) +
       container.withEnvMixin([container.envType.fromFieldPath('POD_IP', 'status.podIP')]) +
-      container.withEnvMixin([
-        envType.withName('GOMAXPROCS') +
-        envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-        envType.withName('GOMEMLIMIT') +
-        envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-      ]) +
       container.withArgsMixin(
         $.util.mapToFlags($.alertmanager_args) +
         mode.flags
@@ -117,6 +111,7 @@
       ) +
       $.util.resourcesRequests('100m', '1Gi') +
       $.util.readinessProbe +
+      $.go_container_mixin +
       $.jaeger_mixin
     else {},
 
