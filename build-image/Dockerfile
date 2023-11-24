@@ -1,5 +1,5 @@
 # Build jsonnet
-FROM alpine:3.17 AS jsonnet-builder
+FROM alpine:3.18 AS jsonnet-builder
 RUN apk add --no-cache git make g++
 RUN git clone https://github.com/google/jsonnet && \
     git  -C jsonnet checkout v0.20.0 && \
@@ -8,7 +8,7 @@ RUN git clone https://github.com/google/jsonnet && \
     cp jsonnet/jsonnetfmt /usr/bin
 
 # Build jb
-FROM alpine:3.17 AS jb-builder
+FROM alpine:3.18 AS jb-builder
 ARG JSONNET_BUNDLER_VERSION=0.5.1
 ARG JSONNET_BUNDLER_CHECKSUM="f5bccc94d28fbbe8ad1d46fd4f208619e45d368a5d7924f6335f4ecfa0605c85  /usr/bin/jb"
 RUN apk add --no-cache curl
@@ -17,19 +17,19 @@ RUN echo "${JSONNET_BUNDLER_CHECKSUM}" | sha256sum -c || (printf "wanted: %s\n  
 RUN chmod +x /usr/bin/jb
 
 # Build tanka
-FROM alpine:3.17 AS tk-builder
-ARG TANKA_VERSION=0.24.0
-ARG TANKA_CHECKSUM="82c8c533c29eefea0af9c28f487203b19dec84ce2624702f99196e777f946ddc  /usr/bin/tk"
+FROM alpine:3.18 AS tk-builder
+ARG TANKA_VERSION=0.26.0
+ARG TANKA_CHECKSUM="089796ae2ce65390501b2c68ceca1ce99ff12787d5ae3b4823c825a07e6e22f4  /usr/bin/tk"
 RUN apk add --no-cache curl
 RUN curl -fSL -o "/usr/bin/tk" "https://github.com/grafana/tanka/releases/download/v${TANKA_VERSION}/tk-linux-amd64"
 RUN echo "${TANKA_CHECKSUM}" | sha256sum -c || (printf "wanted: %s\n   got: %s\n" "${TANKA_CHECKSUM}" "$(sha256sum /usr/bin/tk)"; exit 1)
 RUN chmod +x /usr/bin/tk
 
 # Build mixtool
-FROM golang:1.20-alpine AS mixtool-builder
+FROM golang:1.21-alpine AS mixtool-builder
 RUN GO111MODULE=on go install github.com/monitoring-mixins/mixtool/cmd/mixtool@ae18e31161ea10545b9c1ac0d23c10122f2c12b5
 
-FROM alpine:3.17
+FROM alpine:3.18
 RUN apk add --no-cache git make libgcc libstdc++ zip findutils sed yq
 COPY --from=jsonnet-builder /usr/bin/jsonnetfmt /usr/bin
 COPY --from=jsonnet-builder /usr/bin/jsonnet /usr/bin
