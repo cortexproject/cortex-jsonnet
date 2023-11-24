@@ -20,13 +20,8 @@
     ]) +
     container.withArgsMixin($.util.mapToFlags($.query_tee_args)) +
     container.withEnvMap($.query_tee_env_map) +
-    container.withEnvMixin([
-      envType.withName('GOMAXPROCS') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-      envType.withName('GOMEMLIMIT') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-    ]) +
     $.util.resourcesRequests('1', '512Mi') +
+    $.go_container_mixin +
     $.jaeger_mixin,
 
   query_tee_env_map:: {

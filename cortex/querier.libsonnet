@@ -43,12 +43,7 @@
     $.jaeger_mixin +
     $.util.readinessProbe +
     container.withEnvMap($.querier_env_map) +
-    container.withEnvMixin([
-      envType.withName('GOMAXPROCS') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-      envType.withName('GOMEMLIMIT') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-    ]) +
+    $.go_container_mixin +
     $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '24Gi'),
 

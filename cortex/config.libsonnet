@@ -401,7 +401,34 @@
       max_series: 4.8e+6,  // Max number of series per ingester. 0 = no limit. 4.8 million is closely tied to 15Gb in requests per ingester
       // max_tenants: 0,  // Max number of tenants per ingester. 0 = no limit.
     },
+
+    // if we disable this, we need to make sure we set the resource limits
+    // Disabling this can potentially increase cortex performance,
+    // but it will also cause performance inconsistencies
+    gomaxprocs_based_on_cpu_requests: true,
+    gomemlimit_based_on_mem_requests: true,
+
+    gomaxprocs_resource:
+      if $._config.gomaxprocs_based_on_cpu_requests then
+        'requests.cpu'
+      else
+        'limits.cpu',
+
+    gomemlimit_resource:
+      if $._config.gomemlimit_based_on_mem_requests then
+        'requests.memory'
+      else
+        'limits.memory',
   },
+
+  go_container_mixin::
+    local container = $.core.v1.container;
+    container.withEnvMixin([
+      container.envType.withName('GOMAXPROCS') +
+      container.envType.valueFrom.resourceFieldRef.withResource($._config.gomaxprocs_resource),
+      container.envType.withName('GOMEMLIMIT') +
+      container.envType.valueFrom.resourceFieldRef.withResource($._config.gomemlimit_resource),
+    ]),
 
   local configMap = $.core.v1.configMap,
 

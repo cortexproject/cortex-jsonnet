@@ -42,12 +42,7 @@
     container.withPorts($.store_gateway_ports) +
     container.withArgsMixin($.util.mapToFlags($.store_gateway_args)) +
     container.withEnvMap($.store_gateway_env_map) +
-    container.withEnvMixin([
-      envType.withName('GOMAXPROCS') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.cpu'),
-      envType.withName('GOMEMLIMIT') +
-      envType.valueFrom.resourceFieldRef.withResource('requests.memory'),
-    ]) +
+    $.go_container_mixin +
     container.withVolumeMountsMixin([volumeMount.new('store-gateway-data', '/data')]) +
     $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '18Gi') +
