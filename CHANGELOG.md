@@ -1,6 +1,8 @@
 # Changelog
 
 ## master / unreleased
+
+## 1.15.3 / 2023-11-24
 * [CHANGE] Add default instance max series for ingesters
 * [CHANGE] Add default instance max inflight pushes for distributors
 * [CHANGE] Remove mem-ballast from distributor and querier.
