@@ -7,8 +7,11 @@
     {
       target: 'query-frontend',
 
-      // Need log.level=debug so all queries are logged, needed for analyse.py.
+      // Need log.level=debug to see trace id for queries
       'log.level': 'debug',
+
+      // a message with some statistics is logged for every query.
+      'frontend.query-stats-enabled': true,
 
       // Increase HTTP server response write timeout, as we were seeing some
       // queries that return a lot of data timeing out.
