@@ -32,6 +32,9 @@
       // Do not extend the replication set on unhealthy (or LEAVING) ingester when "unregister on shutdown"
       // is set to false.
       'distributor.extend-writes': $._config.unregister_ingesters_on_shutdown,
+
+      // a message with some statistics is logged for every query.
+      'ruler.query-stats-enabled': true,
     },
 
   ruler_container::

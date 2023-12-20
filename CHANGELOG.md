@@ -3,6 +3,7 @@
 ## master / unreleased
 * [CHANGE] Use cortex v1.16.0
 * [ENHANCEMENT] Enable frontend query stats by default
+* [ENHANCEMENT] Enable ruler query stats by default
 
 ## 1.15.3 / 2023-11-24
 * [CHANGE] Add default instance max series for ingesters
