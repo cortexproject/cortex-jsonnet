@@ -1,8 +1,8 @@
 {
   _images+:: {
     // Various third-party images.
-    memcached: 'memcached:1.6.9-alpine',
-    memcachedExporter: 'prom/memcached-exporter:v0.6.0',
+    memcached: 'memcached:1.6.23-alpine',
+    memcachedExporter: 'prom/memcached-exporter:v0.14.2',
 
     // Our services.
     cortex: 'cortexproject/cortex:v1.16.0',

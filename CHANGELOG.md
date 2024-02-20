@@ -1,6 +1,7 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
 * [CHANGE] Use cortex v1.16.0
 * [ENHANCEMENT] Enable frontend query stats by default
 * [ENHANCEMENT] Enable ruler query stats by default
