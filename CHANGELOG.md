@@ -1,6 +1,18 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
+* [CHANGE] Use cortex v1.16.0
+* [ENHANCEMENT] Enable frontend query stats by default
+* [ENHANCEMENT] Enable ruler query stats by default
+
+## 1.15.3 / 2023-11-24
+* [CHANGE] Add default instance max series for ingesters
+* [CHANGE] Add default instance max inflight pushes for distributors
+* [CHANGE] Remove mem-ballast from distributor and querier.
+* [CHANGE] Increase cpu requests for querier to 2.
+* [CHANGE] Configure GOMAXPROCS and GOMEMLIMIT for all cortex modules based on cpu and memory requests or limits
+* [CHANGE] Add default tenant shard sizes
 * [CHANGE] Use cortex v1.15.3
 * [CHANGE] Azure storage endpoint suffix is set to `blob.core.windows.net` for backward compatibility
 * [ENHANCEMENT] Configure head_chunks_write_queue_size to 1 million to avoid high latency when shipping

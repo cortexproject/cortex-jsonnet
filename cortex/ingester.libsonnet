@@ -3,6 +3,7 @@
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
   local volume = $.core.v1.volume,
+  local volumeMount = $.core.v1.volumeMount,
 
   // The ingesters should persist TSDB blocks and WAL on a persistent
   // volume in order to be crash resilient.
@@ -49,19 +50,23 @@
 
   local name = 'ingester',
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   ingester_container::
     container.new(name, $._images.ingester) +
     container.withPorts($.ingester_ports) +
     container.withArgsMixin($.util.mapToFlags($.ingester_args)) +
+    container.withEnvMap($.ingester_env_map) +
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     $.jaeger_mixin,
 
-  local volumeMount = $.core.v1.volumeMount,
-
   ingester_deployment_labels:: {},
+
+  ingester_env_map:: {
+  },
 
   local ingester_pvc =
     pvc.new('ingester-pvc') +

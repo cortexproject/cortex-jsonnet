@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
   local containerPort = $.core.v1.containerPort,
 
   distributor_args::
@@ -20,11 +21,6 @@
       'distributor.ha-tracker.etcd.endpoints': 'etcd-client.%s.svc.cluster.local.:2379' % $._config.namespace,
       'distributor.ha-tracker.prefix': 'prom_ha/',
 
-      // The memory requests are 2G, and we barely use 100M.
-      // By adding a ballast of 1G, we can drastically reduce GC, but also keep the usage at
-      // around 1.25G, reducing the 99%ile.
-      'mem-ballast-size-bytes': 1 << 30,  // 1GB
-
       'server.grpc.keepalive.max-connection-age': '2m',
       'server.grpc.keepalive.max-connection-age-grace': '5m',
       'server.grpc.keepalive.max-connection-idle': '1m',
@@ -36,7 +32,11 @@
       // Do not extend the replication set on unhealthy (or LEAVING) ingester when "unregister on shutdown"
       // is set to false.
       'distributor.extend-writes': $._config.unregister_ingesters_on_shutdown,
+      'distributor.instance-limits.max-inflight-push-requests': 60,  //60 is very conservative to protect the distributor from OOMs
     },
+
+  distributor_env_map:: {
+  },
 
   distributor_ports:: $.util.defaultPorts,
 
@@ -44,9 +44,11 @@
     container.new('distributor', $._images.distributor) +
     container.withPorts($.distributor_ports) +
     container.withArgsMixin($.util.mapToFlags($.distributor_args)) +
+    container.withEnvMap($.distributor_env_map) +
     $.util.resourcesRequests('2', '2Gi') +
     $.util.resourcesLimits(null, '4Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     $.jaeger_mixin,
 
   local deployment = $.apps.v1.deployment,

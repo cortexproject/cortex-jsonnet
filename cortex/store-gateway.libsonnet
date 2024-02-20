@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
   local podDisruptionBudget = $.policy.v1.podDisruptionBudget,
   local pvc = $.core.v1.persistentVolumeClaim,
   local statefulSet = $.apps.v1.statefulSet,
@@ -40,11 +41,16 @@
     container.new('store-gateway', $._images.store_gateway) +
     container.withPorts($.store_gateway_ports) +
     container.withArgsMixin($.util.mapToFlags($.store_gateway_args)) +
+    container.withEnvMap($.store_gateway_env_map) +
+    $.go_container_mixin +
     container.withVolumeMountsMixin([volumeMount.new('store-gateway-data', '/data')]) +
-    $.util.resourcesRequests('1', '12Gi') +
+    $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '18Gi') +
     $.util.readinessProbe +
     $.jaeger_mixin,
+
+  store_gateway_env_map:: {
+  },
 
   newStoreGatewayStatefulSet(name, container)::
     statefulSet.new(name, 3, [container], store_gateway_data_pvc) +

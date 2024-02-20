@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   ruler_args::
     $._config.grpcConfig +
@@ -31,6 +32,9 @@
       // Do not extend the replication set on unhealthy (or LEAVING) ingester when "unregister on shutdown"
       // is set to false.
       'distributor.extend-writes': $._config.unregister_ingesters_on_shutdown,
+
+      // a message with some statistics is logged for every query.
+      'ruler.query-stats-enabled': true,
     },
 
   ruler_container::
@@ -38,7 +42,9 @@
       container.new('ruler', $._images.ruler) +
       container.withPorts($.util.defaultPorts) +
       container.withArgsMixin($.util.mapToFlags($.ruler_args)) +
-      $.util.resourcesRequests('1', '6Gi') +
+      container.withEnvMap($.ruler_env_map) +
+      $.go_container_mixin +
+      $.util.resourcesRequests('2', '6Gi') +
       $.util.resourcesLimits('16', '16Gi') +
       $.util.readinessProbe +
       $.jaeger_mixin
@@ -55,6 +61,9 @@
       (if $._config.cortex_ruler_allow_multiple_replicas_on_same_node then {} else $.util.antiAffinity) +
       $.util.configVolumeMount($._config.overrides_configmap, '/etc/cortex')
     else {},
+
+  ruler_env_map:: {
+  },
 
   local service = $.core.v1.service,
 

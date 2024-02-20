@@ -260,6 +260,8 @@
 
         // No retention for now.
         compactor_blocks_retention_period: '0',
+
+        ingestion_tenant_shard_size: 3,
       },
 
       medium_small_user:: {
@@ -277,6 +279,8 @@
         // 1000 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 50,
+
+        ingestion_tenant_shard_size: 9,
       },
 
       small_user:: {
@@ -294,6 +298,8 @@
         // 1400 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 70,
+
+        ingestion_tenant_shard_size: 15,
       },
 
       medium_user:: {
@@ -311,6 +317,8 @@
         // 1800 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 90,
+
+        ingestion_tenant_shard_size: 30,
       },
 
       big_user:: {
@@ -328,6 +336,8 @@
         // 2200 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 110,
+
+        ingestion_tenant_shard_size: 60,
       },
 
       super_user:: {
@@ -345,6 +355,8 @@
         // 2600 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 130,
+
+        ingestion_tenant_shard_size: 120,
       },
 
       // This user class has limits increased by +50% compared to the previous one.
@@ -363,6 +375,8 @@
         // 3000 rules
         ruler_max_rules_per_rule_group: 20,
         ruler_max_rule_groups_per_tenant: 150,
+
+        ingestion_tenant_shard_size: 180,
       },
     },
 
@@ -381,14 +395,40 @@
     ingester_stream_chunks_when_using_blocks: true,
 
     // Ingester limits are put directly into runtime config, if not null. Available limits:
-    //    ingester_instance_limits: {
-    //      max_inflight_push_requests: 0,  // Max inflight push requests per ingester. 0 = no limit.
-    //      max_ingestion_rate: 0,  // Max ingestion rate (samples/second) per ingester. 0 = no limit.
-    //      max_series: 0,  // Max number of series per ingester. 0 = no limit.
-    //      max_tenants: 0,  // Max number of tenants per ingester. 0 = no limit.
-    //    },
-    ingester_instance_limits: null,
+    ingester_instance_limits: {
+      // max_inflight_push_requests: 0,  // Max inflight push requests per ingester. 0 = no limit.
+      // max_ingestion_rate: 0,  // Max ingestion rate (samples/second) per ingester. 0 = no limit.
+      max_series: 4.8e+6,  // Max number of series per ingester. 0 = no limit. 4.8 million is closely tied to 15Gb in requests per ingester
+      // max_tenants: 0,  // Max number of tenants per ingester. 0 = no limit.
+    },
+
+    // if we disable this, we need to make sure we set the resource limits
+    // Disabling this can potentially increase cortex performance,
+    // but it will also cause performance inconsistencies
+    gomaxprocs_based_on_cpu_requests: true,
+    gomemlimit_based_on_mem_requests: true,
+
+    gomaxprocs_resource:
+      if $._config.gomaxprocs_based_on_cpu_requests then
+        'requests.cpu'
+      else
+        'limits.cpu',
+
+    gomemlimit_resource:
+      if $._config.gomemlimit_based_on_mem_requests then
+        'requests.memory'
+      else
+        'limits.memory',
   },
+
+  go_container_mixin::
+    local container = $.core.v1.container;
+    container.withEnvMixin([
+      container.envType.withName('GOMAXPROCS') +
+      container.envType.valueFrom.resourceFieldRef.withResource($._config.gomaxprocs_resource),
+      container.envType.withName('GOMEMLIMIT') +
+      container.envType.valueFrom.resourceFieldRef.withResource($._config.gomemlimit_resource),
+    ]),
 
   local configMap = $.core.v1.configMap,
 

@@ -20,6 +20,7 @@
     container.withArgsMixin($.util.mapToFlags($.overrides_exporter_args, prefix='--')) +
     $.util.resourcesRequests('0.5', '0.5Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     container.mixin.readinessProbe.httpGet.withPort($.overrides_exporter_port.name),
 
   local deployment = $.apps.v1.deployment,

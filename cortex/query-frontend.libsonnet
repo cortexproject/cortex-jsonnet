@@ -1,13 +1,17 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   query_frontend_args::
     $._config.grpcConfig
     {
       target: 'query-frontend',
 
-      // Need log.level=debug so all queries are logged, needed for analyse.py.
+      // Need log.level=debug to see trace id for queries
       'log.level': 'debug',
+
+      // a message with some statistics is logged for every query.
+      'frontend.query-stats-enabled': true,
 
       // Increase HTTP server response write timeout, as we were seeing some
       // queries that return a lot of data timeing out.
@@ -42,10 +46,15 @@
     container.new('query-frontend', $._images.query_frontend) +
     container.withPorts($.util.defaultPorts) +
     container.withArgsMixin($.util.mapToFlags($.query_frontend_args)) +
+    container.withEnvMap($.query_frontend_env_map) +
+    $.go_container_mixin +
     $.jaeger_mixin +
     $.util.readinessProbe +
     $.util.resourcesRequests('2', '600Mi') +
     $.util.resourcesLimits(null, '1200Mi'),
+
+  query_frontend_env_map:: {
+  },
 
   local deployment = $.apps.v1.deployment,
 

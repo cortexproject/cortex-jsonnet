@@ -3,6 +3,7 @@
   local volumeMount = $.core.v1.volumeMount,
   local volume = $.core.v1.volume,
   local container = $.core.v1.container,
+  local envType = container.envType,
   local statefulSet = $.apps.v1.statefulSet,
   local service = $.core.v1.service,
   local configMap = $.core.v1.configMap,
@@ -96,6 +97,7 @@
     if $._config.alertmanager_enabled then
       container.new('alertmanager', $._images.alertmanager) +
       container.withPorts($.util.defaultPorts + mode.ports) +
+      container.withEnvMap($.alertmanager_env_map) +
       container.withEnvMixin([container.envType.fromFieldPath('POD_IP', 'status.podIP')]) +
       container.withArgsMixin(
         $.util.mapToFlags($.alertmanager_args) +
@@ -109,8 +111,12 @@
       ) +
       $.util.resourcesRequests('100m', '1Gi') +
       $.util.readinessProbe +
+      $.go_container_mixin +
       $.jaeger_mixin
     else {},
+
+  alertmanager_env_map:: {
+  },
 
   alertmanager_statefulset:
     if $._config.alertmanager_enabled then

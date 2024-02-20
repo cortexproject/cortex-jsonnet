@@ -18,9 +18,14 @@
       container.new('test-exporter', $._images.testExporter) +
       container.withPorts($.util.defaultPorts) +
       container.withArgsMixin($.util.mapToFlags($.test_exporter_args)) +
+      container.withEnvMap($.test_exporter_env_map) +
       $.util.resourcesRequests('100m', '100Mi') +
       $.util.resourcesLimits('100m', '100Mi') +
+      $.go_container_mixin +
       $.jaeger_mixin,
+
+  test_exporter_env_map:: {
+  },
 
   local deployment = $.apps.v1.deployment,
 

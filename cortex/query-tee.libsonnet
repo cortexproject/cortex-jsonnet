@@ -2,6 +2,7 @@
   local container = $.core.v1.container,
   local containerPort = $.core.v1.containerPort,
   local deployment = $.apps.v1.deployment,
+  local envType = container.envType,
   local service = $.core.v1.service,
   local servicePort = $.core.v1.servicePort,
 
@@ -18,8 +19,13 @@
       containerPort.newNamed(name='http-metrics', containerPort=9900),
     ]) +
     container.withArgsMixin($.util.mapToFlags($.query_tee_args)) +
+    container.withEnvMap($.query_tee_env_map) +
     $.util.resourcesRequests('1', '512Mi') +
+    $.go_container_mixin +
     $.jaeger_mixin,
+
+  query_tee_env_map:: {
+  },
 
   query_tee_deployment: if !($._config.query_tee_enabled) then {} else
     deployment.new('query-tee', 2, [$.query_tee_container]),

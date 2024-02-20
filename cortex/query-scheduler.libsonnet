@@ -3,6 +3,7 @@
 {
   local container = $.core.v1.container,
   local deployment = $.apps.v1.deployment,
+  local envType = container.envType,
   local service = $.core.v1.service,
 
   query_scheduler_args+::
@@ -17,6 +18,8 @@
     container.new('query-scheduler', $._images.query_scheduler) +
     container.withPorts($.util.defaultPorts) +
     container.withArgsMixin($.util.mapToFlags($.query_scheduler_args)) +
+    container.withEnvMap($.query_scheduler_env_map) +
+    $.go_container_mixin +
     $.jaeger_mixin +
     $.util.readinessProbe +
     $.util.resourcesRequests('2', '1Gi') +
@@ -29,6 +32,9 @@
     // Do not run more query-schedulers than expected.
     deployment.mixin.spec.strategy.rollingUpdate.withMaxSurge(0) +
     deployment.mixin.spec.strategy.rollingUpdate.withMaxUnavailable(1),
+
+  query_scheduler_env_map:: {
+  },
 
   query_scheduler_deployment: if !$._config.query_scheduler_enabled then {} else
     self.newQuerySchedulerDeployment('query-scheduler', $.query_scheduler_container),

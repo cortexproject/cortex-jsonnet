@@ -21,10 +21,15 @@
       target: 'flusher',
       'blocks-storage.tsdb.retention-period': '10000h',  // don't delete old blocks too soon.
     })) +
+    container.withEnvMap($.flusher_env_map) +
     $.util.resourcesRequests('4', '15Gi') +
     $.util.resourcesLimits(null, '25Gi') +
     $.util.readinessProbe +
+    $.go_container_mixin +
     $.jaeger_mixin,
+
+  flusher_env_map:: {
+  },
 
   flusher_job_func(jobName, pvcName)::
     job.new() +

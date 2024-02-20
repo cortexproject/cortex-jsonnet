@@ -1,5 +1,6 @@
 {
   local container = $.core.v1.container,
+  local envType = container.envType,
 
   querier_args::
     $._config.grpcConfig +
@@ -26,10 +27,6 @@
       'querier.frontend-address': 'query-frontend-discovery.%(namespace)s.svc.cluster.local:9095' % $._config,
       'querier.frontend-client.grpc-max-send-msg-size': 100 << 20,
 
-      // We request high memory but the Go heap is typically very low (< 100MB) and this causes
-      // the GC to trigger continuously. Setting a ballast of 256MB reduces GC.
-      'mem-ballast-size-bytes': 1 << 28,  // 256M
-
       'log.level': 'debug',
     },
 
@@ -46,7 +43,8 @@
     $.jaeger_mixin +
     $.util.readinessProbe +
     container.withEnvMap($.querier_env_map) +
-    $.util.resourcesRequests('1', '12Gi') +
+    $.go_container_mixin +
+    $.util.resourcesRequests('2', '12Gi') +
     $.util.resourcesLimits(null, '24Gi'),
 
   local deployment = $.apps.v1.deployment,
