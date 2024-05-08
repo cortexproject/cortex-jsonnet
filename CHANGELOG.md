@@ -1,5 +1,8 @@
 # Changelog
 
+## master / unreleased
+* [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
+
 ## 1.16.1
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
 * [CHANGE] Use cortex v1.16.1
