@@ -145,6 +145,7 @@
       'distributor.replication-factor': $._config.replication_factor,
       'distributor.shard-by-all-labels': true,
       'distributor.health-check-ingesters': true,
+      'ingester.client.grpc-compression': 'snappy-block',
       'ring.heartbeat-timeout': '10m',
     },
 
