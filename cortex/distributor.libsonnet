@@ -8,6 +8,7 @@
     $._config.ringConfig +
     $._config.distributorConfig +
     $._config.distributorLimitsConfig +
+    $._config.ingesterClientConfig +
     {
       target: 'distributor',
 

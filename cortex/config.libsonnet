@@ -70,6 +70,10 @@
       'server.grpc.keepalive.ping-without-stream-allowed': true,
     },
 
+    ingesterClientConfig:: {
+      'ingester.client.grpc-compression': 'snappy-block',
+    },
+
     genericBlocksStorageConfig:: {
       'store.engine': 'blocks',
     },
@@ -145,7 +149,6 @@
       'distributor.replication-factor': $._config.replication_factor,
       'distributor.shard-by-all-labels': true,
       'distributor.health-check-ingesters': true,
-      'ingester.client.grpc-compression': 'snappy-block',
       'ring.heartbeat-timeout': '10m',
     },
 
