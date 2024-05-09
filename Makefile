@@ -47,14 +47,7 @@ build-mixin:
 test-readme: test-readme/azure test-readme/gcs test-readme/s3
 
 test-readme/%:
-	rm -rf $@ && \
-	mkdir -p $@ && cd $@ && \
-	tk init --k8s=1.24 && \
-	jb install github.com/cortexproject/cortex-jsonnet/cortex@main && \
-	rm -fr ./vendor/cortex && \
-	cp -r ../../cortex ./vendor/ && \
-	cp vendor/cortex/$(notdir $@)/main.jsonnet.example environments/default/main.jsonnet && \
-	PAGER=cat tk show environments/default
+	@./scripts/test-readme.sh $@
 
 clean-white-noise:
 	@$(FIND) . -type f -regextype posix-extended -regex '.*(md|libsonnet)' -print | \

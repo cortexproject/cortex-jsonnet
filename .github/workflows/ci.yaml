@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
         with:
           fetch-depth: 0
@@ -25,10 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
-        with:
-          fetch-depth: 0
       
       - name: "Build mixin"
         run: make build-mixin
@@ -36,10 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
-        with:
-          fetch-depth: 0
       
       - name: "Test readme"
         run: make test-readme
