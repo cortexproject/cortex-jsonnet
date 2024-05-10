@@ -1,6 +1,7 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Enable shuffle sharding in compactors
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
 
 ## 1.16.1
