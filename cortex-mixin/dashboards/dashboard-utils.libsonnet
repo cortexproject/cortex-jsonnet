@@ -503,4 +503,42 @@ local utils = import 'mixin-utils/utils.libsonnet';
       %s
     ||| % [title, description],
   },
+
+  overrideHidden(name)::
+    {
+      matcher: {
+        id: 'byName',
+        options: name,
+      },
+      properties: [
+        {
+          id: 'custom.hidden',
+          value: true,
+        },
+      ],
+    },
+
+  overrideDisplayName(name, displayName)::
+    {
+      matcher: {
+        id: 'byName',
+        options: name,
+      },
+      properties: [
+        {
+          id: 'displayName',
+          value: displayName,
+        },
+      ],
+    },
+
+
+  tablePanel(queries, overrides)::
+    super.tablePanel(queries, {}) + {
+      fieldConfig+: {
+        overrides+: overrides,
+      },
+      styles:: null,
+    },
+
 }

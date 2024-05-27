@@ -3,6 +3,7 @@
 ## master / unreleased
 * [CHANGE] Enable shuffle sharding in compactors
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
+* [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
 
 ## 1.16.1
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
