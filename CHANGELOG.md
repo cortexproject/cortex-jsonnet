@@ -2,6 +2,7 @@
 
 ## master / unreleased
 * [CHANGE] Enable shuffle sharding in compactors
+* [CHANGE] Remove chunks support for dashboards
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
 * [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
 
