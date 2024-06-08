@@ -47,9 +47,7 @@ build-mixin:
 test-readme: test-readme/azure test-readme/gcs test-readme/s3
 
 test-readme/%:
-	@./scripts/test-readme.sh $@; \
-	RESULT=$$?; \
-	exit $$RESULT
+	@./scripts/test-readme.sh $@
 
 clean-white-noise:
 	@$(FIND) . -type f -regextype posix-extended -regex '.*(md|libsonnet)' -print | \
