@@ -1,4 +1,4 @@
-.PHONY: lint build-image publish-build-image test-readme
+.PHONY: lint build-image publish-build-image test-readme clean
 
 JSONNET_FMT := jsonnetfmt
 
@@ -47,14 +47,7 @@ build-mixin:
 test-readme: test-readme/azure test-readme/gcs test-readme/s3
 
 test-readme/%:
-	rm -rf $@ && \
-	mkdir -p $@ && cd $@ && \
-	tk init --k8s=1.24 && \
-	jb install github.com/cortexproject/cortex-jsonnet/cortex@main && \
-	rm -fr ./vendor/cortex && \
-	cp -r ../../cortex ./vendor/ && \
-	cp vendor/cortex/$(notdir $@)/main.jsonnet.example environments/default/main.jsonnet && \
-	PAGER=cat tk show environments/default
+	@./scripts/test-readme.sh $@
 
 clean-white-noise:
 	@$(FIND) . -type f -regextype posix-extended -regex '.*(md|libsonnet)' -print | \
@@ -62,3 +55,9 @@ clean-white-noise:
 
 check-white-noise: clean-white-noise
 	@git diff --exit-code --quiet || (echo "Please remove trailing whitespaces running 'make clean-white-noise'" && false)
+
+clean:
+	rm -rf cortex-mixin/out
+	rm -rf cortex-mixin/vendor
+	rm -f cortex-mixin/cortex-mixin.zip
+	rm -rf test-readme
