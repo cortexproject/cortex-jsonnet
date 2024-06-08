@@ -1,9 +1,9 @@
 #!/bin/sh
-set -e
+set -xe
 rm -rf $1
 mkdir -p $1
 cd $1
-tk init --k8s=1.24
+tk init --k8s=1.26
 jb install github.com/cortexproject/cortex-jsonnet/cortex@main
 rm -fr ./vendor/cortex
 cp -r ../../cortex ./vendor/

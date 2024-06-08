@@ -41,8 +41,8 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: "Test readme aws"
-        run: make test-readme/aws
+      - name: "Test readme s3"
+        run: make test-readme/s3
       - name: "Test readme azure"
         run: make test-readme/azure
       - name: "Test readme gcs"
