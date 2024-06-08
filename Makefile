@@ -1,4 +1,4 @@
-.PHONY: lint build-image publish-build-image test-readme
+.PHONY: lint build-image publish-build-image test-readme clean
 
 JSONNET_FMT := jsonnetfmt
 
@@ -56,7 +56,6 @@ clean-white-noise:
 check-white-noise: clean-white-noise
 	@git diff --exit-code --quiet || (echo "Please remove trailing whitespaces running 'make clean-white-noise'" && false)
 
-.PHONY: clean
 clean:
 	rm -rf cortex-mixin/out
 	rm -rf cortex-mixin/vendor
