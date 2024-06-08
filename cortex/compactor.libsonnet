@@ -30,6 +30,8 @@
 
       // Enable sharding.
       'compactor.sharding-enabled': true,
+      'compactor.sharding-strategy': 'shuffle-sharding',
+      'compactor.tenant-shard-size': 1,
       'compactor.ring.store': 'consul',
       'compactor.ring.consul.hostname': 'consul.%s.svc.cluster.local:8500' % $._config.namespace,
       'compactor.ring.prefix': '',
