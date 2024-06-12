@@ -1,6 +1,7 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Use cortex v1.17.1
 * [CHANGE] Enable shuffle sharding in compactors
 * [CHANGE] Remove chunks support for dashboards
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
