@@ -34,6 +34,12 @@ fmt:
 build-image:
 	docker build -t quay.io/cortexproject/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD) build-image
 
+save-build-image:
+	docker save quay.io/cortexproject/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD) > build-image.tar
+
+load-build-image:
+	docker load < build-image.tar
+
 publish-build-image:
 	docker push quay.io/cortexproject/cortex-jsonnet-build-image:$(shell git rev-parse --short HEAD)
 
