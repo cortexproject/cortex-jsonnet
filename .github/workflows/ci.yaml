@@ -15,7 +15,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
       - uses: actions/checkout@v4
         name: Checkout
@@ -30,7 +30,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
       - uses: actions/checkout@v4
         name: Checkout
@@ -42,7 +42,7 @@ jobs:
 
   readme:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
       - uses: actions/checkout@v4
         name: Checkout
