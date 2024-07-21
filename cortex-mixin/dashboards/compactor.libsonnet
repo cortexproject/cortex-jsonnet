@@ -23,7 +23,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.panel('Tenants compaction progress') +
+        $.timeseriesPanel('Tenants compaction progress') +
         $.queryPanel(|||
           (
             cortex_compactor_tenants_processing_succeeded{%s} +
@@ -44,7 +44,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('')
       .addPanel(
-        $.panel('Compacted blocks / sec') +
+        $.timeseriesPanel('Compacted blocks / sec') +
         $.queryPanel('sum(rate(prometheus_tsdb_compactions_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor), 'blocks') +
         { yaxes: $.yaxes('ops') } +
         $.panelDescription(
@@ -55,7 +55,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.panel('Per-block compaction duration') +
+        $.timeseriesPanel('Per-block compaction duration') +
         $.latencyPanel('prometheus_tsdb_compaction_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.compactor)) +
         $.panelDescription(
           'Per-block compaction duration',
@@ -68,11 +68,11 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('')
       .addPanel(
-        $.panel('Average blocks / tenant') +
+        $.timeseriesPanel('Average blocks / tenant') +
         $.queryPanel('avg(max by(user) (cortex_bucket_blocks_count{%s}))' % $.jobMatcher($._config.job_names.compactor), 'avg'),
       )
       .addPanel(
-        $.panel('Tenants with largest number of blocks') +
+        $.timeseriesPanel('Tenants with largest number of blocks') +
         $.queryPanel('topk(10, max by(user) (cortex_bucket_blocks_count{%s}))' % $.jobMatcher($._config.job_names.compactor), '{{user}}') +
         $.panelDescription(
           'Tenants with largest number of blocks',
@@ -85,7 +85,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Garbage Collector')
       .addPanel(
-        $.panel('Blocks marked for deletion / sec') +
+        $.timeseriesPanel('Blocks marked for deletion / sec') +
         $.queryPanel('sum(rate(cortex_compactor_blocks_marked_for_deletion_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor), 'blocks') +
         { yaxes: $.yaxes('ops') },
       )
@@ -111,7 +111,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ) + { yaxes: $.yaxes('ops') }
       )
       .addPanel(
-        $.panel('Metadata Sync Duration') +
+        $.timeseriesPanel('Metadata Sync Duration') +
         // This metric tracks the duration of a per-tenant metadata sync.
         $.latencyPanel('cortex_compactor_meta_sync_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.compactor)),
       )

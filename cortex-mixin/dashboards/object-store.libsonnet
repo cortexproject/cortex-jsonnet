@@ -7,13 +7,13 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Components')
       .addPanel(
-        $.panel('RPS / component') +
+        $.timeseriesPanel('RPS / component') +
         $.queryPanel('sum by(component) (rate(thanos_objstore_bucket_operations_total{%s}[$__rate_interval]))' % $.namespaceMatcher(), '{{component}}') +
         $.stack +
         { yaxes: $.yaxes('rps') },
       )
       .addPanel(
-        $.panel('Error rate / component') +
+        $.timeseriesPanel('Error rate / component') +
         $.queryPanel('sum by(component) (rate(thanos_objstore_bucket_operation_failures_total{%s}[$__rate_interval])) / sum by(component) (rate(thanos_objstore_bucket_operations_total{%s}[$__rate_interval]))' % [$.namespaceMatcher(), $.namespaceMatcher()], '{{component}}') +
         { yaxes: $.yaxes('percentunit') },
       )
@@ -21,13 +21,13 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Operations')
       .addPanel(
-        $.panel('RPS / operation') +
+        $.timeseriesPanel('RPS / operation') +
         $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s}[$__rate_interval]))' % $.namespaceMatcher(), '{{operation}}') +
         $.stack +
         { yaxes: $.yaxes('rps') },
       )
       .addPanel(
-        $.panel('Error rate / operation') +
+        $.timeseriesPanel('Error rate / operation') +
         $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operation_failures_total{%s}[$__rate_interval])) / sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s}[$__rate_interval]))' % [$.namespaceMatcher(), $.namespaceMatcher()], '{{operation}}') +
         { yaxes: $.yaxes('percentunit') },
       )
@@ -35,30 +35,30 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('')
       .addPanel(
-        $.panel('Op: Get') +
+        $.timeseriesPanel('Op: Get') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="get"}' % $.namespaceMatcher()),
       )
       .addPanel(
-        $.panel('Op: GetRange') +
+        $.timeseriesPanel('Op: GetRange') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="get_range"}' % $.namespaceMatcher()),
       )
       .addPanel(
-        $.panel('Op: Exists') +
+        $.timeseriesPanel('Op: Exists') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="exists"}' % $.namespaceMatcher()),
       )
     )
     .addRow(
       $.row('')
       .addPanel(
-        $.panel('Op: Attributes') +
+        $.timeseriesPanel('Op: Attributes') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="attributes"}' % $.namespaceMatcher()),
       )
       .addPanel(
-        $.panel('Op: Upload') +
+        $.timeseriesPanel('Op: Upload') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="upload"}' % $.namespaceMatcher()),
       )
       .addPanel(
-        $.panel('Op: Delete') +
+        $.timeseriesPanel('Op: Delete') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,operation="delete"}' % $.namespaceMatcher()),
       )
     ),
