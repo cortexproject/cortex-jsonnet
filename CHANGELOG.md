@@ -6,6 +6,7 @@
 * [CHANGE] Remove chunks support for dashboards
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
 * [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
+* [ENHANCEMENT] Configure head_chunks_write_queue_size to 1 million to avoid high latency when shipping
 
 ## 1.16.1
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
@@ -23,7 +24,6 @@
 * [CHANGE] Add default tenant shard sizes
 * [CHANGE] Use cortex v1.15.3
 * [CHANGE] Azure storage endpoint suffix is set to `blob.core.windows.net` for backward compatibility
-* [ENHANCEMENT] Configure head_chunks_write_queue_size to 1 million to avoid high latency when shipping
 
 ## 1.14.1 / 2023-07-11
 
