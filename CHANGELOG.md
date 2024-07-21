@@ -1,10 +1,18 @@
 # Changelog
 
 ## master / unreleased
+* [CHANGE] Use cortex v1.17.1
+* [CHANGE] Enable shuffle sharding in compactors
+* [CHANGE] Remove chunks support for dashboards
+* [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
+* [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
+
+## 1.16.1
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
-* [CHANGE] Use cortex v1.16.0
+* [CHANGE] Use cortex v1.16.1
 * [ENHANCEMENT] Enable frontend query stats by default
 * [ENHANCEMENT] Enable ruler query stats by default
+* [ENHANCEMENT] Configure `-blocks-storage.bucket-store.ignore-blocks-within` in queriers, rulers and store-gateways
 
 ## 1.15.3 / 2023-11-24
 * [CHANGE] Add default instance max series for ingesters

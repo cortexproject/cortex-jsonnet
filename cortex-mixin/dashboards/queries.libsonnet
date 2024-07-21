@@ -110,23 +110,6 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.queryPanel('sum(rate(cortex_cache_corrupt_chunks_total{%s}[1m]))' % $.jobMatcher($._config.job_names.querier), 'Corrupt chunks'),
       )
     )
-    .addRowIf(
-      std.member($._config.storage_engine, 'chunks'),
-      $.row('Querier - Chunks storage - Index Cache')
-      .addPanel(
-        $.panel('Total entries') +
-        $.queryPanel('sum(querier_cache_added_new_total{cache="store.index-cache-read.fifocache",%s}) - sum(querier_cache_evicted_total{cache="store.index-cache-read.fifocache",%s})' % [$.jobMatcher($._config.job_names.querier), $.jobMatcher($._config.job_names.querier)], 'Entries'),
-      )
-      .addPanel(
-        $.panel('Cache Hit %') +
-        $.queryPanel('(sum(rate(querier_cache_gets_total{cache="store.index-cache-read.fifocache",%s}[1m])) - sum(rate(querier_cache_misses_total{cache="store.index-cache-read.fifocache",%s}[1m]))) / sum(rate(querier_cache_gets_total{cache="store.index-cache-read.fifocache",%s}[1m]))' % [$.jobMatcher($._config.job_names.querier), $.jobMatcher($._config.job_names.querier), $.jobMatcher($._config.job_names.querier)], 'hit rate')
-        { yaxes: $.yaxes({ format: 'percentunit', max: 1 }) },
-      )
-      .addPanel(
-        $.panel('Churn Rate') +
-        $.queryPanel('sum(rate(querier_cache_evicted_total{cache="store.index-cache-read.fifocache",%s}[1m]))' % $.jobMatcher($._config.job_names.querier), 'churn rate'),
-      )
-    )
     .addRow(
       $.row('Ingester')
       .addPanel(
@@ -142,30 +125,6 @@ local utils = import 'mixin-utils/utils.libsonnet';
       .addPanel(
         $.panel('Samples per Query') +
         utils.latencyRecordingRulePanel('cortex_ingester_queried_samples', $.jobSelector($._config.job_names.ingester), multiplier=1) +
-        { yaxes: $.yaxes('short') },
-      )
-    )
-    .addRowIf(
-      std.member($._config.storage_engine, 'chunks'),
-      $.row('Querier - Chunks storage - Store')
-      .addPanel(
-        $.panel('Index Lookups per Query') +
-        utils.latencyRecordingRulePanel('cortex_chunk_store_index_lookups_per_query', $.jobSelector($._config.job_names.querier), multiplier=1) +
-        { yaxes: $.yaxes('short') },
-      )
-      .addPanel(
-        $.panel('Series (pre-intersection) per Query') +
-        utils.latencyRecordingRulePanel('cortex_chunk_store_series_pre_intersection_per_query', $.jobSelector($._config.job_names.querier), multiplier=1) +
-        { yaxes: $.yaxes('short') },
-      )
-      .addPanel(
-        $.panel('Series (post-intersection) per Query') +
-        utils.latencyRecordingRulePanel('cortex_chunk_store_series_post_intersection_per_query', $.jobSelector($._config.job_names.querier), multiplier=1) +
-        { yaxes: $.yaxes('short') },
-      )
-      .addPanel(
-        $.panel('Chunks per Query') +
-        utils.latencyRecordingRulePanel('cortex_chunk_store_chunks_per_query', $.jobSelector($._config.job_names.querier), multiplier=1) +
         { yaxes: $.yaxes('short') },
       )
     )

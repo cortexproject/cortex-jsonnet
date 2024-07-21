@@ -70,12 +70,26 @@
       'server.grpc.keepalive.ping-without-stream-allowed': true,
     },
 
+    ingesterClientConfig:: {
+      'ingester.client.grpc-compression': 'snappy-block',
+    },
+
     genericBlocksStorageConfig:: {
       'store.engine': 'blocks',
     },
 
+    // Ignore blocks in querier, ruler and store-gateways for the last 11h
+    ignore_blocks_within: '11h',
+
+    // No need to look at store for data younger than 12h, as ingesters have all of it.
+    query_store_after: '12h',
+
+    // Ingesters don't have data older than 13h, no need to ask them.
+    query_ingesters_within: '13h',
+
     queryBlocksStorageConfig:: {
       'blocks-storage.bucket-store.sync-dir': '/data/tsdb',
+      'blocks-storage.bucket-store.ignore-blocks-within': $._config.ignore_blocks_within,
       'blocks-storage.bucket-store.ignore-deletion-marks-delay': '1h',
 
       'store-gateway.sharding-enabled': true,
@@ -116,12 +130,8 @@
       // type queries. 32 days to allow for comparision over the last month (31d) and
       // then some.
       'store.max-query-length': '768h',
-
-      // Ingesters don't have data older than 13h, no need to ask them.
-      'querier.query-ingesters-within': '13h',
-
-      // No need to look at store for data younger than 12h, as ingesters have all of it.
-      'querier.query-store-after': '12h',
+      'querier.query-ingesters-within': $._config.query_ingesters_within,
+      'querier.query-store-after': $._config.query_store_after,
     },
 
     // PromQL query engine config (shared between all services running PromQL engine, like the ruler and querier).

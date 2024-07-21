@@ -47,14 +47,15 @@ local utils = import 'mixin-utils/utils.libsonnet';
               cluster_namespace_deployment:actual_replicas:count{cluster=~"$cluster", namespace=~"$namespace"}
             )
           |||,
-        ], {
-          __name__: { alias: 'Cluster', type: 'hidden' },
-          cluster: { alias: 'Cluster' },
-          namespace: { alias: 'Namespace' },
-          deployment: { alias: 'Service' },
-          reason: { alias: 'Reason' },
-          Value: { alias: 'Required Replicas', decimals: 0 },
-        })
+        ], [
+          $.overrideHidden('__name__'),
+          $.overrideHidden('Time'),
+          $.overrideDisplayName('cluster', 'Cluster'),
+          $.overrideDisplayName('namespace', 'Namespace'),
+          $.overrideDisplayName('deployment', 'Service'),
+          $.overrideDisplayName('reason', 'Reason'),
+          $.overrideDisplayName('Value', 'Required Replicas'),
+        ])
       )
     ),
 }

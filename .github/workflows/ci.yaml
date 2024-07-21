@@ -3,43 +3,57 @@ name: CI
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'build-image/Dockerfile'
+      - '.github/workflows/build-image.yaml'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'build-image/Dockerfile'
+      - '.github/workflows/build-image.yaml'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
         with:
           fetch-depth: 0
-      
+
       - name: "Lint mixin"
         run: make lint-mixin
-      
+
       - name: "Lint playbooks"
         run: make lint-playbooks
+
   build:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
         with:
           fetch-depth: 0
-      
+
       - name: "Build mixin"
         run: make build-mixin
+
   readme:
     runs-on: ubuntu-latest
-    container: quay.io/cortexproject/cortex-jsonnet-build-image:e158eda
+    container: quay.io/cortexproject/cortex-jsonnet-build-image:fbe4726
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         name: Checkout
         with:
           fetch-depth: 0
-      
-      - name: "Test readme"
-        run: make test-readme
+
+      - name: "Test readme s3"
+        run: make test-readme/s3
+
+      - name: "Test readme azure"
+        run: make test-readme/azure
+
+      - name: "Test readme gcs"
+        run: make test-readme/gcs
