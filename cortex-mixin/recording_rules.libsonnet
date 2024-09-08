@@ -2,7 +2,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
 
 {
   local _config = {
-    max_series_per_ingester: 1.5e6,
+    max_series_per_ingester: 3.0e6,
     max_samples_per_sec_per_ingester: 80e3,
     max_samples_per_sec_per_distributor: 240e3,
     limit_utilisation_target: 0.6,
@@ -148,7 +148,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
             ||| % _config,
           },
           {
-            // Ingester should have 1.5M series in memory
+            // Ingester should have 3.0M series in memory
             record: 'cluster_namespace_deployment_reason:required_replicas:count',
             labels: {
               deployment: 'ingester',
@@ -167,7 +167,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           },
           {
             // We should be about to cover 60% of our limits,
-            // and ingester can have 1.5M series in memory
+            // and ingester can have 3.0M series in memory
             record: 'cluster_namespace_deployment_reason:required_replicas:count',
             labels: {
               deployment: 'ingester',

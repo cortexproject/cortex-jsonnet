@@ -555,13 +555,13 @@ How to **investigate**:
 
 ### CortexProvisioningTooManyActiveSeries
 
-This alert fires if the average number of in-memory series per ingester is above our target (1.5M).
+This alert fires if the average number of in-memory series per ingester is above our target (3.0M).
 
 How to **fix**:
 - Scale up ingesters
   - To find out the Cortex clusters where ingesters should be scaled up and how many minimum replicas are expected:
     ```
-    ceil(sum by(cluster, namespace) (cortex_ingester_memory_series) / 1.5e6) >
+    ceil(sum by(cluster, namespace) (cortex_ingester_memory_series) / 3.0e6) >
     count by(cluster, namespace) (cortex_ingester_memory_series)
     ```
 - After the scale up, the in-memory series are expected to be reduced at the next TSDB head compaction (occurring every 2h)
@@ -595,7 +595,7 @@ How to **fix**:
     kubectl -n <namespace> delete pod ingester-XXX
     ```
   - Restarting an ingester typically reduces the memory allocated by mmap-ed files. After the restart, ingester may allocate this memory again over time, but it may give more time while working on a longer term solution
-- Check the `Cortex / Writes Resources` dashboard to see if the number of series per ingester is above the target (1.5M). If so:
+- Check the `Cortex / Writes Resources` dashboard to see if the number of series per ingester is above the target (3.0M). If so:
   - Scale up ingesters
   - Memory is expected to be reclaimed at the next TSDB head compaction (occurring every 2h)
 
