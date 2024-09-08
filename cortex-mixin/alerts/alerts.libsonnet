@@ -389,11 +389,11 @@
       rules: [
         {
           alert: 'CortexProvisioningTooManyActiveSeries',
-          // We target each ingester to 1.5M in-memory series. This alert fires if the average
-          // number of series / ingester in a Cortex cluster is > 1.6M for 2h (we compact
+          // We target each ingester to 3.0M in-memory series. This alert fires if the average
+          // number of series / ingester in a Cortex cluster is > 3.2M for 2h (we compact
           // the TSDB head every 2h).
           expr: |||
-            avg by (%s) (cortex_ingester_memory_series) > 1.6e6
+            avg by (%s) (cortex_ingester_memory_series) > 3.2e6
           ||| % [$._config.alert_aggregation_labels],
           'for': '2h',
           labels: {
