@@ -6,6 +6,7 @@
 * [CHANGE] Remove chunks support for dashboards
 * [CHANGE] Target 3M memory series per ingester instead of 1.5M
 * [CHANGE] Update jsonnet-libs to Fri Jul 19 12:51:49 2024 #57
+* [CHANGE] Increase CortexProvisioningTooManyWrites alert threshold to 160e3
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
 * [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
 
