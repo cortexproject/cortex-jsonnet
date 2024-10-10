@@ -121,7 +121,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   successFailurePanel(title, successMetric, failureMetric)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel([successMetric, failureMetric], ['successful', 'failed']) +
     $.stack + {
       aliasColors: {
@@ -132,7 +132,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
 
   // Displays started, completed and failed rate.
   startedCompletedFailedPanel(title, startedMetric, completedMetric, failedMetric)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel([startedMetric, completedMetric, failedMetric], ['started', 'completed', 'failed']) +
     $.stack + {
       aliasColors: {
@@ -143,7 +143,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   containerCPUUsagePanel(title, containerName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel([
       'sum by(%s) (rate(container_cpu_usage_seconds_total{%s,container=~"%s"}[$__rate_interval]))' % [$._config.per_instance_label, $.namespaceMatcher(), containerName],
       'min(container_spec_cpu_quota{%s,container=~"%s"} / container_spec_cpu_period{%s,container=~"%s"})' % [$.namespaceMatcher(), containerName, $.namespaceMatcher(), containerName],
@@ -160,7 +160,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   containerMemoryWorkingSetPanel(title, containerName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel([
       // We use "max" instead of "sum" otherwise during a rolling update of a statefulset we will end up
       // summing the memory of the old instance/pod (whose metric will be stale for 5m) to the new instance/pod.
@@ -180,7 +180,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   containerNetworkPanel(title, metric, instanceName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel(
       'sum by(%(instance)s) (rate(%(metric)s{%(namespace)s,%(instance)s=~"%(instanceName)s"}[$__rate_interval]))' % {
         namespace: $.namespaceMatcher(),
@@ -199,7 +199,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     $.containerNetworkPanel('Transmit Bandwidth', 'container_network_transmit_bytes_total', instanceName),
 
   containerDiskWritesPanel(title, containerName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel(
       |||
         sum by(%s, %s, device) (
@@ -220,7 +220,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     { yaxes: $.yaxes('Bps') },
 
   containerDiskReadsPanel(title, containerName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel(
       |||
         sum by(%s, %s, device) (
@@ -239,7 +239,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     { yaxes: $.yaxes('Bps') },
 
   containerDiskSpaceUtilization(title, containerName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel(
       |||
         max by(persistentvolumeclaim) (
@@ -266,7 +266,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     else 'label_name="%s"' % containerName,
 
   goHeapInUsePanel(title, jobName)::
-    $.panel(title) +
+    $.timeseriesPanel(title) +
     $.queryPanel(
       'sum by(%s) (go_memstats_heap_inuse_bytes{%s})' % [$._config.per_instance_label, $.jobMatcher(jobName)],
       '{{%s}}' % $._config.per_instance_label
@@ -361,39 +361,39 @@ local utils = import 'mixin-utils/utils.libsonnet';
   getObjectStoreRows(title, component):: [
     super.row(title)
     .addPanel(
-      $.panel('Operations / sec') +
+      $.timeseriesPanel('Operations / sec') +
       $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s,component="%s"}[$__rate_interval]))' % [$.namespaceMatcher(), component], '{{operation}}') +
       $.stack +
       { yaxes: $.yaxes('rps') },
     )
     .addPanel(
-      $.panel('Error rate') +
+      $.timeseriesPanel('Error rate') +
       $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operation_failures_total{%s,component="%s"}[$__rate_interval])) / sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s,component="%s"}[$__rate_interval]))' % [$.namespaceMatcher(), component, $.namespaceMatcher(), component], '{{operation}}') +
       { yaxes: $.yaxes('percentunit') },
     )
     .addPanel(
-      $.panel('Latency of Op: Attributes') +
+      $.timeseriesPanel('Latency of Op: Attributes') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="attributes"}' % [$.namespaceMatcher(), component]),
     )
     .addPanel(
-      $.panel('Latency of Op: Exists') +
+      $.timeseriesPanel('Latency of Op: Exists') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="exists"}' % [$.namespaceMatcher(), component]),
     ),
     $.row('')
     .addPanel(
-      $.panel('Latency of Op: Get') +
+      $.timeseriesPanel('Latency of Op: Get') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="get"}' % [$.namespaceMatcher(), component]),
     )
     .addPanel(
-      $.panel('Latency of Op: GetRange') +
+      $.timeseriesPanel('Latency of Op: GetRange') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="get_range"}' % [$.namespaceMatcher(), component]),
     )
     .addPanel(
-      $.panel('Latency of Op: Upload') +
+      $.timeseriesPanel('Latency of Op: Upload') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="upload"}' % [$.namespaceMatcher(), component]),
     )
     .addPanel(
-      $.panel('Latency of Op: Delete') +
+      $.timeseriesPanel('Latency of Op: Delete') +
       $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="%s",operation="delete"}' % [$.namespaceMatcher(), component]),
     ),
   ],
@@ -406,7 +406,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     };
     super.row(title)
     .addPanel(
-      $.panel('Requests / sec') +
+      $.timeseriesPanel('Requests / sec') +
       $.queryPanel(
         |||
           sum by(operation) (
@@ -425,7 +425,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
       { yaxes: $.yaxes('ops') }
     )
     .addPanel(
-      $.panel('Latency (getmulti)') +
+      $.timeseriesPanel('Latency (getmulti)') +
       $.latencyPanel(
         'thanos_memcached_operation_duration_seconds',
         |||
@@ -439,7 +439,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
       )
     )
     .addPanel(
-      $.panel('Hit ratio') +
+      $.timeseriesPanel('Hit ratio') +
       $.queryPanel(
         |||
           sum(

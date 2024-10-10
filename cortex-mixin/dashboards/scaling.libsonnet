@@ -38,7 +38,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       ($.row('Scaling') + { height: '400px' })
       .addPanel(
-        $.panel('Workload-based scaling') + { sort: { col: 0, desc: false } } +
+        $.timeseriesPanel('Workload-based scaling') + { sort: { col: 0, desc: false } } +
         $.tablePanel([
           |||
             sort_desc(

@@ -67,7 +67,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Ruler')
       .addPanel(
-        $.panel('Rules') +
+        $.timeseriesPanel('Rules') +
         $.queryPanel(
           'sum by(%s) (cortex_prometheus_rule_group_rules{%s})' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.ruler)],
           '{{%s}}' % $._config.per_instance_label
