@@ -8,13 +8,12 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Query Frontend')
       .addPanel(
-        $.timeseriesPanel('Queue Duration') +
+        $.timeseriesPanel('Queue Duration', unit='ms') +
         $.latencyPanel('cortex_query_frontend_queue_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.query_frontend)),
       )
       .addPanel(
-        $.timeseriesPanel('Retries') +
-        $.latencyPanel('cortex_query_frontend_retries', '{%s}' % $.jobMatcher($._config.job_names.query_frontend), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Retries', unit='short') +
+        $.latencyPanel('cortex_query_frontend_retries', '{%s}' % $.jobMatcher($._config.job_names.query_frontend), multiplier=1),
       )
       .addPanel(
         $.timeseriesPanel('Queue Length') +
@@ -24,7 +23,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Query Scheduler')
       .addPanel(
-        $.timeseriesPanel('Queue Duration') +
+        $.timeseriesPanel('Queue Duration', unit='ms') +
         $.latencyPanel('cortex_query_scheduler_queue_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.query_scheduler)),
       )
       .addPanel(
@@ -78,9 +77,8 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Number of Sharded Queries per Query') +
+        $.timeseriesPanel('Number of Sharded Queries per Query', unit='short') +
         $.latencyPanel('cortex_frontend_sharded_queries_per_query', '{%s}' % $.jobMatcher($._config.job_names.query_frontend), multiplier=1) +
-        { yaxes: $.yaxes('short') } +
         $.panelDescription(
           'Number of Sharded Queries per Query',
           |||
@@ -93,9 +91,8 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Querier')
       .addPanel(
-        $.timeseriesPanel('Stages') +
+        $.timeseriesPanel('Stages', unit='ms') +
         $.queryPanel('max by (slice) (prometheus_engine_query_duration_seconds{quantile="0.9",%s}) * 1e3' % $.jobMatcher($._config.job_names.querier), '{{slice}}') +
-        { yaxes: $.yaxes('ms') } +
         $.stack,
       )
       .addPanel(
@@ -113,33 +110,28 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Ingester')
       .addPanel(
-        $.timeseriesPanel('Series per Query') +
-        utils.latencyRecordingRulePanel('cortex_ingester_queried_series', $.jobSelector($._config.job_names.ingester), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Series per Query', unit='short') +
+        utils.latencyRecordingRulePanel('cortex_ingester_queried_series', $.jobSelector($._config.job_names.ingester), multiplier=1),
       )
       .addPanel(
-        $.timeseriesPanel('Chunks per Query') +
-        utils.latencyRecordingRulePanel('cortex_ingester_queried_chunks', $.jobSelector($._config.job_names.ingester), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Chunks per Query', unit='short') +
+        utils.latencyRecordingRulePanel('cortex_ingester_queried_chunks', $.jobSelector($._config.job_names.ingester), multiplier=1),
       )
       .addPanel(
-        $.timeseriesPanel('Samples per Query') +
-        utils.latencyRecordingRulePanel('cortex_ingester_queried_samples', $.jobSelector($._config.job_names.ingester), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Samples per Query', unit='short') +
+        utils.latencyRecordingRulePanel('cortex_ingester_queried_samples', $.jobSelector($._config.job_names.ingester), multiplier=1),
       )
     )
     .addRowIf(
       std.member($._config.storage_engine, 'blocks'),
       $.row('Querier - Blocks storage')
       .addPanel(
-        $.timeseriesPanel('Number of store-gateways hit per Query') +
-        $.latencyPanel('cortex_querier_storegateway_instances_hit_per_query', '{%s}' % $.jobMatcher($._config.job_names.querier), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Number of store-gateways hit per Query', unit='short') +
+        $.latencyPanel('cortex_querier_storegateway_instances_hit_per_query', '{%s}' % $.jobMatcher($._config.job_names.querier), multiplier=1),
       )
       .addPanel(
-        $.timeseriesPanel('Refetches of missing blocks per Query') +
-        $.latencyPanel('cortex_querier_storegateway_refetches_per_query', '{%s}' % $.jobMatcher($._config.job_names.querier), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Refetches of missing blocks per Query', unit='short') +
+        $.latencyPanel('cortex_querier_storegateway_refetches_per_query', '{%s}' % $.jobMatcher($._config.job_names.querier), multiplier=1),
       )
       .addPanel(
         $.timeseriesPanel('Consistency checks failed') +
@@ -151,13 +143,12 @@ local utils = import 'mixin-utils/utils.libsonnet';
       std.member($._config.storage_engine, 'blocks'),
       $.row('')
       .addPanel(
-        $.timeseriesPanel('Bucket indexes loaded (per querier)') +
+        $.timeseriesPanel('Bucket indexes loaded (per querier)', unit='short') +
         $.queryPanel([
           'max(cortex_bucket_index_loaded{%s})' % $.jobMatcher($._config.job_names.querier),
           'min(cortex_bucket_index_loaded{%s})' % $.jobMatcher($._config.job_names.querier),
           'avg(cortex_bucket_index_loaded{%s})' % $.jobMatcher($._config.job_names.querier),
-        ], ['Max', 'Min', 'Average']) +
-        { yaxes: $.yaxes('short') },
+        ], ['Max', 'Min', 'Average']),
       )
       .addPanel(
         $.successFailurePanel(
@@ -167,7 +158,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.timeseriesPanel('Bucket indexes load latency') +
+        $.timeseriesPanel('Bucket indexes load latency', unit='ms') +
         $.latencyPanel('cortex_bucket_index_load_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.querier)),
       )
     )
@@ -175,21 +166,18 @@ local utils = import 'mixin-utils/utils.libsonnet';
       std.member($._config.storage_engine, 'blocks'),
       $.row('Store-gateway - Blocks storage')
       .addPanel(
-        $.timeseriesPanel('Blocks queried / sec') +
-        $.queryPanel('sum(rate(cortex_bucket_store_series_blocks_queried_sum{component="store-gateway",%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.store_gateway), 'blocks') +
-        { yaxes: $.yaxes('ops') },
+        $.timeseriesPanel('Blocks queried / sec', unit='ops') +
+        $.queryPanel('sum(rate(cortex_bucket_store_series_blocks_queried_sum{component="store-gateway",%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.store_gateway), 'blocks'),
       )
       .addPanel(
-        $.timeseriesPanel('Data fetched / sec') +
+        $.timeseriesPanel('Data fetched / sec', unit='ops') +
         $.queryPanel('sum by(data_type) (rate(cortex_bucket_store_series_data_fetched_sum{component="store-gateway",%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.store_gateway), '{{data_type}}') +
-        $.stack +
-        { yaxes: $.yaxes('ops') },
+        $.stack,
       )
       .addPanel(
-        $.timeseriesPanel('Data touched / sec') +
+        $.timeseriesPanel('Data touched / sec', unit='ops') +
         $.queryPanel('sum by(data_type) (rate(cortex_bucket_store_series_data_touched_sum{component="store-gateway",%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.store_gateway), '{{data_type}}') +
-        $.stack +
-        { yaxes: $.yaxes('ops') },
+        $.stack,
       )
     )
     .addRowIf(
@@ -238,7 +226,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.queryPanel('cortex_bucket_store_indexheader_lazy_load_total{%s} - cortex_bucket_store_indexheader_lazy_unload_total{%s}' % [$.jobMatcher($._config.job_names.store_gateway), $.jobMatcher($._config.job_names.store_gateway)], '{{%s}}' % $._config.per_instance_label)
       )
       .addPanel(
-        $.timeseriesPanel('Index-header lazy load duration') +
+        $.timeseriesPanel('Index-header lazy load duration', unit='ms') +
         $.latencyPanel('cortex_bucket_store_indexheader_lazy_load_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.store_gateway)),
       )
       .addPanel(

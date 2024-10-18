@@ -71,15 +71,14 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_request_duration_seconds_count{%s, route=~"api_(v1|prom)_push"}' % $.jobMatcher($._config.job_names.gateway))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.gateway) + [utils.selector.re('route', 'api_(v1|prom)_push')])
       )
       .addPanel(
-        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label, unit='s') +
         $.hiddenLegendQueryPanel(
           'histogram_quantile(0.99, sum by(le, %s) (rate(cortex_request_duration_seconds_bucket{%s, route=~"api_(v1|prom)_push"}[$__rate_interval])))' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.gateway)], ''
-        ) +
-        { yaxes: $.yaxes('s') }
+        )
       )
     )
     .addRow(
@@ -89,15 +88,14 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_request_duration_seconds_count{%s, route=~"/distributor.Distributor/Push|/httpgrpc.*|api_(v1|prom)_push"}' % $.jobMatcher($._config.job_names.distributor))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.distributor) + [utils.selector.re('route', '/distributor.Distributor/Push|/httpgrpc.*|api_(v1|prom)_push')])
       )
       .addPanel(
-        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label, unit='s') +
         $.hiddenLegendQueryPanel(
           'histogram_quantile(0.99, sum by(le, %s) (rate(cortex_request_duration_seconds_bucket{%s, route=~"/distributor.Distributor/Push|/httpgrpc.*|api_(v1|prom)_push"}[$__rate_interval])))' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.distributor)], ''
-        ) +
-        { yaxes: $.yaxes('s') }
+        )
       )
     )
     .addRow(
@@ -107,7 +105,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_kv_request_duration_seconds_count{%s}' % $.jobMatcher($._config.job_names.distributor))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_kv_request_duration_seconds', $.jobSelector($._config.job_names.distributor))
       )
     )
@@ -118,15 +116,14 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_request_duration_seconds_count{%s,route="/cortex.Ingester/Push"}' % $.jobMatcher($._config.job_names.ingester))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.ingester) + [utils.selector.eq('route', '/cortex.Ingester/Push')])
       )
       .addPanel(
-        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s p99 Latency' % $._config.per_instance_label, unit='s') +
         $.hiddenLegendQueryPanel(
           'histogram_quantile(0.99, sum by(le, %s) (rate(cortex_request_duration_seconds_bucket{%s, route="/cortex.Ingester/Push"}[$__rate_interval])))' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.ingester)], ''
-        ) +
-        { yaxes: $.yaxes('s') }
+        )
       )
     )
     .addRow(
@@ -136,7 +133,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_kv_request_duration_seconds_count{%s}' % $.jobMatcher($._config.job_names.ingester))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_kv_request_duration_seconds', $.jobSelector($._config.job_names.ingester))
       )
     )
@@ -158,7 +155,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Upload latency') +
+        $.timeseriesPanel('Upload latency', unit='ms') +
         $.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', '{%s,component="ingester",operation="upload"}' % $.jobMatcher($._config.job_names.ingester)) +
         $.panelDescription(
           'Upload latency',
@@ -188,7 +185,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Compactions latency') +
+        $.timeseriesPanel('Compactions latency', unit='ms') +
         $.latencyPanel('cortex_ingester_tsdb_compaction_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.ingester)) +
         $.panelDescription(
           'Compaction latency',
@@ -231,9 +228,8 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('WAL truncations latency (includes checkpointing)') +
+        $.timeseriesPanel('WAL truncations latency (includes checkpointing)', unit='s') +
         $.queryPanel('sum(rate(cortex_ingester_tsdb_wal_truncate_duration_seconds_sum{%s}[$__rate_interval])) / sum(rate(cortex_ingester_tsdb_wal_truncate_duration_seconds_count{%s}[$__rate_interval]))' % [$.jobMatcher($._config.job_names.ingester), $.jobMatcher($._config.job_names.ingester)], 'avg') +
-        { yaxes: $.yaxes('s') } +
         $.panelDescription(
           'WAL truncations latency (including checkpointing)',
           |||
@@ -243,7 +239,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Corruptions / sec') +
+        $.timeseriesPanel('Corruptions / sec', unit='ops') +
         $.queryPanel([
           'sum(rate(cortex_ingester_wal_corruptions_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.ingester),
           'sum(rate(cortex_ingester_tsdb_mmap_chunk_corruptions_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.ingester),

@@ -96,7 +96,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='s') +
         $.queryPanel(
           $.rulerQueries.ruleEvaluations.latency % [$.jobMatcher($._config.job_names.ruler), $.jobMatcher($._config.job_names.ruler)],
           'average'
@@ -110,16 +110,15 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_request_duration_seconds_count{%s, route=~"%s"}' % [$.jobMatcher($._config.job_names.gateway), ruler_config_api_routes_re])
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.gateway) + [utils.selector.re('route', ruler_config_api_routes_re)])
       )
       .addPanel(
-        $.timeseriesPanel('Per route p99 Latency') +
+        $.timeseriesPanel('Per route p99 latency', unit='s') +
         $.queryPanel(
           'histogram_quantile(0.99, sum by (route, le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%s, route=~"%s"}))' % [$.jobMatcher($._config.job_names.gateway), ruler_config_api_routes_re],
           '{{ route }}'
-        ) +
-        { yaxes: $.yaxes('s') }
+        )
       )
     )
     .addRow(
@@ -129,7 +128,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_ingester_client_request_duration_seconds_count{%s, operation="/cortex.Ingester/Push"}' % $.jobMatcher($._config.job_names.ruler))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         $.latencyPanel('cortex_ingester_client_request_duration_seconds', '{%s, operation="/cortex.Ingester/Push"}' % $.jobMatcher($._config.job_names.ruler))
       )
     )
@@ -140,7 +139,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_ingester_client_request_duration_seconds_count{%s, operation="/cortex.Ingester/QueryStream"}' % $.jobMatcher($._config.job_names.ruler))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         $.latencyPanel('cortex_ingester_client_request_duration_seconds', '{%s, operation="/cortex.Ingester/QueryStream"}' % $.jobMatcher($._config.job_names.ruler))
       )
     )
@@ -148,14 +147,12 @@ local utils = import 'mixin-utils/utils.libsonnet';
       std.member($._config.storage_engine, 'blocks'),
       $.row('Ruler - Blocks storage')
       .addPanel(
-        $.timeseriesPanel('Number of store-gateways hit per Query') +
-        $.latencyPanel('cortex_querier_storegateway_instances_hit_per_query', '{%s}' % $.jobMatcher($._config.job_names.ruler), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Number of store-gateways hit per Query', unit='short') +
+        $.latencyPanel('cortex_querier_storegateway_instances_hit_per_query', '{%s}' % $.jobMatcher($._config.job_names.ruler), multiplier=1),
       )
       .addPanel(
-        $.timeseriesPanel('Refetches of missing blocks per Query') +
-        $.latencyPanel('cortex_querier_storegateway_refetches_per_query', '{%s}' % $.jobMatcher($._config.job_names.ruler), multiplier=1) +
-        { yaxes: $.yaxes('short') },
+        $.timeseriesPanel('Refetches of missing blocks per Query', unit='short') +
+        $.latencyPanel('cortex_querier_storegateway_refetches_per_query', '{%s}' % $.jobMatcher($._config.job_names.ruler), multiplier=1),
       )
       .addPanel(
         $.timeseriesPanel('Consistency checks failed') +
@@ -185,7 +182,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.queryPanel($.rulerQueries.groupEvaluations.missedIterations % $.jobMatcher($._config.job_names.ruler), '{{ user }}'),
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='s') +
         $.queryPanel(
           $.rulerQueries.groupEvaluations.latency % [$.jobMatcher($._config.job_names.ruler), $.jobMatcher($._config.job_names.ruler)],
           '{{ user }}'
@@ -201,7 +198,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       ($.row('Rule Evaluation per User') + { collapse: true })
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='s') +
         $.queryPanel(
           $.rulerQueries.perUserPerGroupEvaluations.latency % [$.jobMatcher($._config.job_names.ruler), $.jobMatcher($._config.job_names.ruler)],
           '{{ user }}'

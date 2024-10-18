@@ -62,6 +62,44 @@ local utils = import 'mixin-utils/utils.libsonnet';
                .addTemplate('cluster', 'cortex_build_info', 'cluster')
                .addTemplate('namespace', 'cortex_build_info{cluster=~"$cluster"}', 'namespace'),
     },
+  timeseriesPanel(title, unit='short'):: {
+    datasource: '$datasource',
+    fieldConfig: {
+      defaults: {
+        custom: {
+          drawStyle: 'line',
+          fillOpacity: 1,
+          lineWidth: 1,
+          pointSize: 5,
+          showPoints: 'never',
+          spanNulls: false,
+          stacking: {
+            group: 'A',
+            mode: 'none',
+          },
+        },
+        thresholds: {
+          mode: 'absolute',
+          steps: [],
+        },
+        unit: unit,
+      },
+      overrides: [],
+    },
+    options: {
+      legend: {
+        showLegend: true,
+      },
+      tooltip: {
+        mode: 'single',
+        sort: 'none',
+      },
+    },
+    links: [],
+    targets: [],
+    title: title,
+    type: 'timeseries',
+  },
 
   // The mixin allow specialism of the job selector depending on if its a single binary
   // deployment or a namespaced one.
@@ -108,6 +146,35 @@ local utils = import 'mixin-utils/utils.libsonnet';
         }
         for target in super.targets
       ],
+      fieldConfig+: {
+        defaults+: {
+          custom+: {
+            lineWidth: 0,
+            fillOpacity: 100,  // Get solid fill.
+            stacking: {
+              mode: 'normal',
+              group: 'A',
+            },
+          },
+          unit: 'reqps',
+          min: 0,
+        },
+        overrides+: [{
+          matcher: {
+            id: 'byName',
+            options: status,
+          },
+          properties: [
+            {
+              id: 'color',
+              value: {
+                mode: 'fixed',
+                fixedColor: $.httpStatusColors[status],
+              },
+            },
+          ],
+        } for status in std.objectFieldsAll($.httpStatusColors)],
+      },
     },
 
   latencyPanel(metricName, selector, multiplier='1e3')::
@@ -121,7 +188,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   successFailurePanel(title, successMetric, failureMetric)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='short') +
     $.queryPanel([successMetric, failureMetric], ['successful', 'failed']) +
     $.stack + {
       aliasColors: {
@@ -132,7 +199,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
 
   // Displays started, completed and failed rate.
   startedCompletedFailedPanel(title, startedMetric, completedMetric, failedMetric)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='ops') +
     $.queryPanel([startedMetric, completedMetric, failedMetric], ['started', 'completed', 'failed']) +
     $.stack + {
       aliasColors: {
@@ -160,7 +227,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   containerMemoryWorkingSetPanel(title, containerName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='bytes') +
     $.queryPanel([
       // We use "max" instead of "sum" otherwise during a rolling update of a statefulset we will end up
       // summing the memory of the old instance/pod (whose metric will be stale for 5m) to the new instance/pod.
@@ -180,7 +247,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     },
 
   containerNetworkPanel(title, metric, instanceName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='Bps') +
     $.queryPanel(
       'sum by(%(instance)s) (rate(%(metric)s{%(namespace)s,%(instance)s=~"%(instanceName)s"}[$__rate_interval]))' % {
         namespace: $.namespaceMatcher(),
@@ -199,7 +266,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     $.containerNetworkPanel('Transmit Bandwidth', 'container_network_transmit_bytes_total', instanceName),
 
   containerDiskWritesPanel(title, containerName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='Bps') +
     $.queryPanel(
       |||
         sum by(%s, %s, device) (
@@ -220,7 +287,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     { yaxes: $.yaxes('Bps') },
 
   containerDiskReadsPanel(title, containerName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='Bps') +
     $.queryPanel(
       |||
         sum by(%s, %s, device) (
@@ -239,7 +306,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     { yaxes: $.yaxes('Bps') },
 
   containerDiskSpaceUtilization(title, containerName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='percentunit') +
     $.queryPanel(
       |||
         max by(persistentvolumeclaim) (
@@ -266,7 +333,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     else 'label_name="%s"' % containerName,
 
   goHeapInUsePanel(title, jobName)::
-    $.timeseriesPanel(title) +
+    $.timeseriesPanel(title, unit='bytes') +
     $.queryPanel(
       'sum by(%s) (go_memstats_heap_inuse_bytes{%s})' % [$._config.per_instance_label, $.jobMatcher(jobName)],
       '{{%s}}' % $._config.per_instance_label
@@ -361,13 +428,12 @@ local utils = import 'mixin-utils/utils.libsonnet';
   getObjectStoreRows(title, component):: [
     super.row(title)
     .addPanel(
-      $.timeseriesPanel('Operations / sec') +
+      $.timeseriesPanel('Operations / sec', unit='rps') +
       $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s,component="%s"}[$__rate_interval]))' % [$.namespaceMatcher(), component], '{{operation}}') +
-      $.stack +
-      { yaxes: $.yaxes('rps') },
+      $.stack
     )
     .addPanel(
-      $.timeseriesPanel('Error rate') +
+      $.timeseriesPanel('Error rate', unit='percentunit') +
       $.queryPanel('sum by(operation) (rate(thanos_objstore_bucket_operation_failures_total{%s,component="%s"}[$__rate_interval])) / sum by(operation) (rate(thanos_objstore_bucket_operations_total{%s,component="%s"}[$__rate_interval]))' % [$.namespaceMatcher(), component, $.namespaceMatcher(), component], '{{operation}}') +
       { yaxes: $.yaxes('percentunit') },
     )
@@ -406,7 +472,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     };
     super.row(title)
     .addPanel(
-      $.timeseriesPanel('Requests / sec') +
+      $.timeseriesPanel('Requests / sec', unit='ops') +
       $.queryPanel(
         |||
           sum by(operation) (
@@ -439,7 +505,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
       )
     )
     .addPanel(
-      $.timeseriesPanel('Hit ratio') +
+      $.timeseriesPanel('Hit ratio', unit='percentunit') +
       $.queryPanel(
         |||
           sum(

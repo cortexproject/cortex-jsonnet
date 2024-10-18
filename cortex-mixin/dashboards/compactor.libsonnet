@@ -14,7 +14,6 @@ local utils = import 'mixin-utils/utils.libsonnet';
           'sum(rate(cortex_compactor_runs_failed_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor)
         ) +
         $.bars +
-        { yaxes: $.yaxes('ops') } +
         $.panelDescription(
           'Per-instance runs',
           |||
@@ -44,9 +43,8 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('')
       .addPanel(
-        $.timeseriesPanel('Compacted blocks / sec') +
+        $.timeseriesPanel('Compacted blocks / sec', unit='ops') +
         $.queryPanel('sum(rate(prometheus_tsdb_compactions_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor), 'blocks') +
-        { yaxes: $.yaxes('ops') } +
         $.panelDescription(
           'Compacted blocks / sec',
           |||
@@ -55,7 +53,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ),
       )
       .addPanel(
-        $.timeseriesPanel('Per-block compaction duration') +
+        $.timeseriesPanel('Per-block compaction duration', unit='s') +
         $.latencyPanel('prometheus_tsdb_compaction_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.compactor)) +
         $.panelDescription(
           'Per-block compaction duration',
@@ -85,9 +83,8 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Garbage Collector')
       .addPanel(
-        $.timeseriesPanel('Blocks marked for deletion / sec') +
-        $.queryPanel('sum(rate(cortex_compactor_blocks_marked_for_deletion_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor), 'blocks') +
-        { yaxes: $.yaxes('ops') },
+        $.timeseriesPanel('Blocks marked for deletion / sec', unit='ops') +
+        $.queryPanel('sum(rate(cortex_compactor_blocks_marked_for_deletion_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.compactor), 'blocks'),
       )
       .addPanel(
         $.successFailurePanel(
@@ -111,7 +108,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         ) + { yaxes: $.yaxes('ops') }
       )
       .addPanel(
-        $.timeseriesPanel('Metadata Sync Duration') +
+        $.timeseriesPanel('Metadata Sync Duration', unit='ms') +
         // This metric tracks the duration of a per-tenant metadata sync.
         $.latencyPanel('cortex_compactor_meta_sync_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.compactor)),
       )

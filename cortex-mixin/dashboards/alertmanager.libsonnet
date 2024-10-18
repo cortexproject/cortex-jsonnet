@@ -73,7 +73,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         $.latencyPanel('cortex_alertmanager_notification_latency_seconds', '{%s}' % $.jobMatcher($._config.job_names.alertmanager))
       )
     )
@@ -84,7 +84,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.qpsPanel('cortex_request_duration_seconds_count{%s, route=~"api_v1_alerts|alertmanager"}' % $.jobMatcher($._config.job_names.gateway))
       )
       .addPanel(
-        $.timeseriesPanel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.gateway) + [utils.selector.re('route', 'api_v1_alerts|alertmanager')])
       )
     )
@@ -166,7 +166,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         }
       )
       .addPanel(
-        $.timeseriesPanel('Initial sync duration') +
+        $.timeseriesPanel('Initial sync duration', unit='s') +
         $.latencyPanel('cortex_alertmanager_state_initial_sync_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.alertmanager)) + {
           targets: [
             target {

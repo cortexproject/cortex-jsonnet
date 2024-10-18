@@ -125,7 +125,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 14, y: 0 },
         },
 
-        $.timeseriesPanel('Writes 99th Latency') +
+        $.timeseriesPanel('Writes 99th latency', unit='s') +
         $.newStatPanel(|||
           histogram_quantile(0.99, sum by (le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"}))
         ||| % config, unit='s', thresholds=[
@@ -176,7 +176,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 14, y: 4 },
         },
 
-        $.timeseriesPanel('Reads 99th Latency') +
+        $.timeseriesPanel('Reads 99th latency', unit='s') +
         $.newStatPanel(|||
           histogram_quantile(0.99, sum by (le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s"}))
         ||| % config, unit='s', thresholds=[
