@@ -9,6 +9,7 @@
 * [CHANGE] Increase CortexProvisioningTooManyWrites alert threshold to 160e3
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
 * [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
+* [ENHANCEMENT] Configure head_chunks_write_queue_size to 1 million to avoid high latency when shipping
 
 ## 1.16.1
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2

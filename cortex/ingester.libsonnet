@@ -37,6 +37,7 @@
 
       'blocks-storage.tsdb.dir': '/data/tsdb',
       'blocks-storage.tsdb.block-ranges-period': '2h',
+      'blocks-storage.tsdb.head-chunks-write-queue-size': 1e6,
       'blocks-storage.tsdb.retention-period': '96h',  // 4 days protection against blocks not being uploaded from ingesters.
       'blocks-storage.tsdb.ship-interval': '1m',
 
