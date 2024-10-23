@@ -10,22 +10,22 @@ local utils = import 'mixin-utils/utils.libsonnet';
          showTitle: false,
        })
       .addPanel(
-        $.panel('Total Alerts') +
+        $.timeseriesPanel('Total Alerts') +
         $.statPanel('sum(cluster_job_%s:cortex_alertmanager_alerts:sum{%s})' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.alertmanager)], format='short')
       )
       .addPanel(
-        $.panel('Total Silences') +
+        $.timeseriesPanel('Total Silences') +
         $.statPanel('sum(cluster_job_%s:cortex_alertmanager_silences:sum{%s})' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.alertmanager)], format='short')
       )
       .addPanel(
-        $.panel('Tenants') +
+        $.timeseriesPanel('Tenants') +
         $.statPanel('max(cortex_alertmanager_tenants_discovered{%s})' % $.jobMatcher($._config.job_names.alertmanager), format='short')
       )
     )
     .addRow(
       $.row('Alerts Received')
       .addPanel(
-        $.panel('APS') +
+        $.timeseriesPanel('APS') +
         $.queryPanel(
           [
             |||
@@ -42,7 +42,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Alert Notifications')
       .addPanel(
-        $.panel('NPS') +
+        $.timeseriesPanel('NPS') +
         $.queryPanel(
           [
             |||
@@ -56,7 +56,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.panel('NPS by integration') +
+        $.timeseriesPanel('NPS by integration') +
         $.queryPanel(
           [
             |||
@@ -73,18 +73,18 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.panel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         $.latencyPanel('cortex_alertmanager_notification_latency_seconds', '{%s}' % $.jobMatcher($._config.job_names.alertmanager))
       )
     )
     .addRow(
       $.row('Configuration API (gateway) + Alertmanager UI')
       .addPanel(
-        $.panel('QPS') +
+        $.timeseriesPanel('QPS') +
         $.qpsPanel('cortex_request_duration_seconds_count{%s, route=~"api_v1_alerts|alertmanager"}' % $.jobMatcher($._config.job_names.gateway))
       )
       .addPanel(
-        $.panel('Latency') +
+        $.timeseriesPanel('Latency', unit='ms') +
         utils.latencyRecordingRulePanel('cortex_request_duration_seconds', $.jobSelector($._config.job_names.gateway) + [utils.selector.re('route', 'api_v1_alerts|alertmanager')])
       )
     )
@@ -94,7 +94,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Replication')
       .addPanel(
-        $.panel('Per %s Tenants' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s Tenants' % $._config.per_instance_label) +
         $.queryPanel(
           'max by(%s) (cortex_alertmanager_tenants_owned{%s})' % [$._config.per_instance_label, $.jobMatcher($._config.job_names.alertmanager)],
           '{{%s}}' % $._config.per_instance_label
@@ -102,7 +102,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.stack
       )
       .addPanel(
-        $.panel('Per %s Alerts' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s Alerts' % $._config.per_instance_label) +
         $.queryPanel(
           'sum by(%s) (cluster_job_%s:cortex_alertmanager_alerts:sum{%s})' % [$._config.per_instance_label, $._config.per_instance_label, $.jobMatcher($._config.job_names.alertmanager)],
           '{{%s}}' % $._config.per_instance_label
@@ -110,7 +110,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         $.stack
       )
       .addPanel(
-        $.panel('Per %s Silences' % $._config.per_instance_label) +
+        $.timeseriesPanel('Per %s Silences' % $._config.per_instance_label) +
         $.queryPanel(
           'sum by(%s) (cluster_job_%s:cortex_alertmanager_silences:sum{%s})' % [$._config.per_instance_label, $._config.per_instance_label, $.jobMatcher($._config.job_names.alertmanager)],
           '{{%s}}' % $._config.per_instance_label
@@ -121,7 +121,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Tenant Configuration Sync')
       .addPanel(
-        $.panel('Syncs/sec') +
+        $.timeseriesPanel('Syncs/sec') +
         $.queryPanel(
           [
             |||
@@ -135,14 +135,14 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.panel('Syncs/sec (By Reason)') +
+        $.timeseriesPanel('Syncs/sec (By Reason)') +
         $.queryPanel(
           'sum by(reason) (rate(cortex_alertmanager_sync_configs_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.alertmanager),
           '{{reason}}'
         )
       )
       .addPanel(
-        $.panel('Ring Check Errors/sec') +
+        $.timeseriesPanel('Ring Check Errors/sec') +
         $.queryPanel(
           'sum (rate(cortex_alertmanager_ring_check_errors_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.alertmanager),
           'errors'
@@ -152,7 +152,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Sharding Initial State Sync')
       .addPanel(
-        $.panel('Initial syncs /sec') +
+        $.timeseriesPanel('Initial syncs /sec') +
         $.queryPanel(
           'sum by(outcome) (rate(cortex_alertmanager_state_initial_sync_completed_total{%s}[$__rate_interval]))' % $.jobMatcher($._config.job_names.alertmanager),
           '{{outcome}}'
@@ -166,7 +166,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         }
       )
       .addPanel(
-        $.panel('Initial sync duration') +
+        $.timeseriesPanel('Initial sync duration', unit='s') +
         $.latencyPanel('cortex_alertmanager_state_initial_sync_duration_seconds', '{%s}' % $.jobMatcher($._config.job_names.alertmanager)) + {
           targets: [
             target {
@@ -177,7 +177,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         }
       )
       .addPanel(
-        $.panel('Fetch state from other alertmanagers /sec') +
+        $.timeseriesPanel('Fetch state from other alertmanagers /sec') +
         $.queryPanel(
           [
             |||
@@ -201,7 +201,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
     .addRow(
       $.row('Sharding Runtime State Sync')
       .addPanel(
-        $.panel('Replicate state to other alertmanagers /sec') +
+        $.timeseriesPanel('Replicate state to other alertmanagers /sec') +
         $.queryPanel(
           [
             |||
@@ -215,7 +215,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.panel('Merge state from other alertmanagers /sec') +
+        $.timeseriesPanel('Merge state from other alertmanagers /sec') +
         $.queryPanel(
           [
             |||
@@ -229,7 +229,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         )
       )
       .addPanel(
-        $.panel('Persist state to remote storage /sec') +
+        $.timeseriesPanel('Persist state to remote storage /sec') +
         $.queryPanel(
           [
             |||

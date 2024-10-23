@@ -20,7 +20,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         //
         // Rollout progress
         //
-        $.panel('Rollout progress') +
+        $.timeseriesPanel('Rollout progress') +
         $.barGauge([
           // Multi-zone deployments are grouped together removing the "zone-X" suffix.
           // After the grouping, the resulting label is called "cortex_service".
@@ -89,7 +89,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         //
         // Writes
         //
-        $.panel('Writes - 2xx') +
+        $.timeseriesPanel('Writes - 2xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s",status_code=~"2.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"}[$__rate_interval]))
@@ -100,7 +100,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 10, y: 0 },
         },
 
-        $.panel('Writes - 4xx') +
+        $.timeseriesPanel('Writes - 4xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s",status_code=~"4.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"}[$__rate_interval]))
@@ -113,7 +113,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 12, y: 0 },
         },
 
-        $.panel('Writes - 5xx') +
+        $.timeseriesPanel('Writes - 5xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s",status_code=~"5.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"}[$__rate_interval]))
@@ -125,7 +125,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 14, y: 0 },
         },
 
-        $.panel('Writes 99th Latency') +
+        $.timeseriesPanel('Writes 99th latency', unit='s') +
         $.newStatPanel(|||
           histogram_quantile(0.99, sum by (le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"}))
         ||| % config, unit='s', thresholds=[
@@ -140,7 +140,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         //
         // Reads
         //
-        $.panel('Reads - 2xx') +
+        $.timeseriesPanel('Reads - 2xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s",status_code=~"2.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s"}[$__rate_interval]))
@@ -151,7 +151,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 10, y: 4 },
         },
 
-        $.panel('Reads - 4xx') +
+        $.timeseriesPanel('Reads - 4xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s",status_code=~"4.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s"}[$__rate_interval]))
@@ -164,7 +164,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 12, y: 4 },
         },
 
-        $.panel('Reads - 5xx') +
+        $.timeseriesPanel('Reads - 5xx') +
         $.newStatPanel(|||
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s",status_code=~"5.+"}[$__rate_interval])) /
           sum(rate(cortex_request_duration_seconds_count{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s"}[$__rate_interval]))
@@ -176,7 +176,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
           gridPos: { h: 4, w: 2, x: 14, y: 4 },
         },
 
-        $.panel('Reads 99th Latency') +
+        $.timeseriesPanel('Reads 99th latency', unit='s') +
         $.newStatPanel(|||
           histogram_quantile(0.99, sum by (le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%(gateway_job_matcher)s, route=~"%(gateway_read_routes_regex)s"}))
         ||| % config, unit='s', thresholds=[
@@ -191,7 +191,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         //
         // Unhealthy pods
         //
-        $.panel('Unhealthy pods') +
+        $.timeseriesPanel('Unhealthy pods') +
         $.newStatPanel([
           |||
             kube_deployment_status_replicas_unavailable{%(namespace_matcher)s, deployment=~"%(all_services_regex)s"}
@@ -280,7 +280,7 @@ local utils = import 'mixin-utils/utils.libsonnet';
         //
         // Performance comparison with 24h ago
         //
-        $.panel('Latency vs 24h ago') +
+        $.timeseriesPanel('Latency vs 24h ago') +
         $.queryPanel([|||
           1 - (
             avg_over_time(histogram_quantile(0.99, sum by (le) (cluster_job_route:cortex_request_duration_seconds_bucket:sum_rate{%(gateway_job_matcher)s, route=~"%(gateway_write_routes_regex)s"} offset 24h))[1h:])
