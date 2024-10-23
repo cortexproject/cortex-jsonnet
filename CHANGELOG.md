@@ -9,7 +9,7 @@
 * [CHANGE] Increase CortexProvisioningTooManyWrites alert threshold to 160e3
 * [CHANGE] Use `timeseriesPanel` instead of `panel` when creating panels #58
 * [ENHANCEMENT] Configure `-ingester.client.grpc-compression` to be `snappy-block`
-* [ENHANCEMENT] Support Grafana 11 in Cortex Service Scaling Dashboard
+* [ENHANCEMENT] Support Grafana 11 in all dashboards
 * [BUGFIX] Remove deprecated option `max_series_per_query`
 
 ## 1.16.1
