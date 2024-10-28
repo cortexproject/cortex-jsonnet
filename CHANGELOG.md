@@ -1,6 +1,6 @@
 # Changelog
 
-## master / unreleased
+## 1.17.1 / 2024-10-23
 * [CHANGE] Use cortex v1.17.1
 * [CHANGE] Enable shuffle sharding in compactors
 * [CHANGE] Remove chunks support for dashboards
@@ -12,7 +12,7 @@
 * [ENHANCEMENT] Support Grafana 11 in all dashboards
 * [BUGFIX] Remove deprecated option `max_series_per_query`
 
-## 1.16.1
+## 1.16.1 / 2024-04-30
 * [CHANGE] Upgrade memcached to 1.6.23-alpine and memcached-exporter to v0.14.2
 * [CHANGE] Use cortex v1.16.1
 * [ENHANCEMENT] Enable frontend query stats by default
