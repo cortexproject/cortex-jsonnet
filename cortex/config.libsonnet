@@ -340,6 +340,7 @@
       },
 
       super_user:: {
+        compactor_tenant_shard_size: 2,
         max_series_per_metric: 0,  // Disabled in favour of the max global limit
         max_series_per_user: 0,  // Disabled in favour of the max global limit
 
@@ -358,6 +359,7 @@
 
       // This user class has limits increased by +50% compared to the previous one.
       mega_user+:: {
+        compactor_tenant_shard_size: 2,
         max_series_per_metric: 0,  // Disabled in favour of the max global limit
         max_series_per_user: 0,  // Disabled in favour of the max global limit
 
@@ -372,6 +374,60 @@
         ruler_max_rule_groups_per_tenant: 150,
 
         ingestion_tenant_shard_size: 180,
+      },
+
+      user_24M:: {  // 50% more than previous
+        compactor_tenant_shard_size: 4,
+        max_series_per_metric: 0,  // Disabled in favour of the max global limit
+        max_series_per_user: 0,  // Disabled in favour of the max global limit
+
+        max_global_series_per_user: 24000000,  // 24M
+        max_global_series_per_metric: 2400000,  // 2.4M
+
+        ingestion_rate: 3000000,  // 3M
+        ingestion_burst_size: 30000000,  // 30M
+
+        // 3400 rules
+        ruler_max_rules_per_rule_group: 20,
+        ruler_max_rule_groups_per_tenant: 170,
+
+        ingestion_tenant_shard_size: 270,
+      },
+
+      user_32M:: {  // 33% more than previous
+        compactor_tenant_shard_size: 4,
+        max_series_per_metric: 0,  // Disabled in favour of the max global limit
+        max_series_per_user: 0,  // Disabled in favour of the max global limit
+
+        max_global_series_per_user: 32000000,  // 32M
+        max_global_series_per_metric: 3200000,  // 3.2M
+
+        ingestion_rate: 4500000,  // 4.5M
+        ingestion_burst_size: 45000000,  // 45M
+
+        // 3800 rules
+        ruler_max_rules_per_rule_group: 20,
+        ruler_max_rule_groups_per_tenant: 190,
+
+        ingestion_tenant_shard_size: 360,
+      },
+
+      user_48M:: {  // 50% more than previous
+        compactor_tenant_shard_size: 8,
+        max_series_per_metric: 0,  // Disabled in favour of the max global limit
+        max_series_per_user: 0,  // Disabled in favour of the max global limit
+
+        max_global_series_per_user: 48000000,  // 48M
+        max_global_series_per_metric: 4800000,  // 4.8M
+
+        ingestion_rate: 6000000,  // 6M
+        ingestion_burst_size: 60000000,  // 60M
+
+        // 4200 rules
+        ruler_max_rules_per_rule_group: 20,
+        ruler_max_rule_groups_per_tenant: 210,
+
+        ingestion_tenant_shard_size: 540,
       },
     },
 
