@@ -13,7 +13,7 @@
     cortex_store_gateway_data_disk_class: 'standard',
 
     // Allow to configure the compactor disk.
-    cortex_compactor_data_disk_size: '250Gi',
+    cortex_compactor_data_disk_size: '500Gi',
     cortex_compactor_data_disk_class: 'fast',
 
     // Allow to fine tune compactor.
