@@ -1,5 +1,8 @@
 # Changelog
 
+## master
+* [ENHANCEMENT] Add bigger tenants and configure default compactor tenant shards
+
 ## 1.17.1 / 2024-10-23
 * [CHANGE] Use cortex v1.17.1
 * [CHANGE] Enable shuffle sharding in compactors
