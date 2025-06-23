@@ -2,6 +2,7 @@
 
 ## master
 * [ENHANCEMENT] Add bigger tenants and configure default compactor tenant shards
+* [ENHANCEMENT] Add alert `CortexCompactorWriteVisitMarkerIsFailing` to monitor compactors
 
 ## 1.17.1 / 2024-10-23
 * [CHANGE] Use cortex v1.17.1

@@ -102,6 +102,22 @@
             ||| % $._config,
           },
         },
+        {
+          // Alert if compactor are not able to update the visit-marker.
+          alert: 'CortexCompactorBlockVisitMarkerIsFailing',
+          'for': '2h',
+          expr: |||
+            sum(increase(cortex_compactor_block_visit_marker_write_failed{job=~".+/%(compactor)s"}[2h]))>0
+          ||| % $._config.job_names,
+          labels: {
+            severity: 'critical'
+          },
+          annotations: {
+            message: |||
+              Cortex compactors are not able to update the visit marker, double check logs to see what is happening
+            |||
+          }
+        }
       ],
     },
   ],
