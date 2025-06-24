@@ -379,6 +379,17 @@ How to **investigate**:
 - Ensure ingesters are successfully shipping blocks to the storage
 - Look for any error in the compactor logs
 
+### CortexCompactorWriteVisitMarkerIsFailing
+
+Only applies to compactors when using shuffle sharding.
+This alert fires if the compactor is not able to update the visit marker across all tenants.
+The marker file is a very small json file that should never have any problems getting updated.
+
+How to **investigate**:
+- Verify the logs for the compactors, they should show the exact reason
+- If you see the `context canceled` or any other timeouts in the logs,
+consider increasing `-compactor.compaction-visit-marker-timeout` and `-compactor.compaction-visit-marker-file-update-interval`.
+
 ### CortexCompactorHasNotSuccessfullyRunCompaction
 
 This alert fires if the compactor is not able to successfully compact all discovered compactable blocks (across all tenants).
