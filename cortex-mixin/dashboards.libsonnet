@@ -11,6 +11,8 @@
     (import 'dashboards/rollout-progress.libsonnet') +
     (import 'dashboards/compactor.libsonnet') +
     (import 'dashboards/compactor-resources.libsonnet') +
+    (import 'dashboards/parquet.libsonnet') +
+    (import 'dashboards/parquet-converter-resources.libsonnet') +
     (import 'dashboards/object-store.libsonnet') +
 
     (if !$._config.resources_dashboards_enabled then {} else

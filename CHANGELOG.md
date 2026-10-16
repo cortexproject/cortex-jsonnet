@@ -3,6 +3,8 @@
 ## master
 * [CHANGE] Use k8s-libsonnet 1.36. k8s-libsonnet removed 1.30, which broke the README instructions and `make test-readme`
 * [ENHANCEMENT] Add bigger tenants and configure default compactor tenant shards
+* [ENHANCEMENT] Add `Cortex / Parquet` and `Cortex / Parquet Converter Resources` dashboards
+* [ENHANCEMENT] Add parquet converter and parquet queryable alerts
 
 ## 1.17.1 / 2024-10-23
 * [CHANGE] Use cortex v1.17.1

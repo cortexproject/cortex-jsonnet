@@ -25,6 +25,7 @@
       store_gateway: '(store-gateway|cortex$)',
       gateway: '(gateway|cortex-gw|cortex-gw-internal)',
       compactor: 'compactor.*',  // Match also custom compactor deployments.
+      parquet_converter: 'parquet-converter.*',  // Match also custom parquet-converter deployments.
       alertmanager: 'alertmanager',
     },
 
@@ -43,6 +44,7 @@
     // Name selectors for different application instances, using the "per_instance_label".
     instance_names: {
       compactor: 'compactor.*',
+      parquet_converter: 'parquet-converter.*',
       alertmanager: 'alertmanager.*',
     },
 
