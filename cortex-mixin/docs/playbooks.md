@@ -462,6 +462,86 @@ How to **investigate**:
 - Safely manually delete the block from the bucket if was a partial delete or an upload failed by a compactor
 - Further investigate if was an upload failed by an ingester but not later retried (ingesters are expected to retry uploads until succeed)
 
+### CortexParquetConverterFailingConversions
+
+This alert fires when the parquet converter fails to convert blocks of a tenant and converts none of that tenant's blocks for 1 hour.
+
+How it **works**:
+- The parquet converter scans its tenants on every `-parquet-converter.conversion-interval` (default 1m). For each block that is wider than the first `-compactor.block-ranges` range and has no valid converter mark, it downloads the block, writes the parquet files and then writes a converter mark.
+- `cortex_parquet_converter_block_convert_failures_total` counts every failed conversion, except cancellations and permission errors.
+- A block that fails is tried again on the next scan, so one bad block can make the failure counter increase on every scan.
+
+How to **investigate**:
+- Look for errors in the parquet converter logs for the tenant in the alert.
+- Check the disk use of the parquet converter. It downloads the whole TSDB block to its local disk before it converts it, so a block that is larger than the free disk fails every time. The `Cortex / Parquet Converter Resources` dashboard shows the disk use.
+- Check the object store errors for `component="parquet-converter"` on the `Cortex / Parquet` dashboard.
+- If one block fails every time, for example because it is corrupted, see [`CortexCompactorHasNotSuccessfullyRunCompaction`](#cortexcompactorhasnotsuccessfullyruncompaction) for how to skip a corrupted block.
+
+### CortexParquetConverterNotConverting
+
+This alert fires when a tenant has blocks that are due for parquet conversion, but the parquet converter has converted none of that tenant's blocks for 3 hours.
+
+How it **works**:
+- The compactor sets `cortex_bucket_parquet_unconverted_blocks_count` when it cleans the tenant's bucket, every `-compactor.cleanup-interval` (default 15m). It counts the blocks that are wider than the first block range and have no parquet files. Blocks that are marked for deletion are included.
+- Each tenant is owned by a parquet converter instance in the parquet converter ring. If no healthy instance owns the tenant, its blocks are not converted.
+
+How to **investigate**:
+- Check that the parquet converter is running and that `cortex_parquet_converter_users_owned` is more than 0. If it is 0, check the parquet converter ring (`/parquet-converter/ring`) and [`CortexParquetConverterRingUnhealthy`](#cortexparquetconverterringunhealthy).
+- Check that parquet conversion is enabled for the tenant (`parquet_converter_enabled` in the limits).
+- Check the parquet converter logs and [`CortexParquetConverterFailingConversions`](#cortexparquetconverterfailingconversions).
+- One scan processes the tenants one after another. A tenant with many large blocks can make one scan take hours, so other tenants wait. Check `cortex_parquet_converter_convert_block_duration_seconds` for slow tenants.
+- If the blocks are marked for deletion, the converter does not convert them, and the alert stops when the compactor deletes them.
+
+### CortexParquetConversionDelayHigh
+
+This alert fires when more than 20% of the parquet conversions finish more than 5 hours after the TSDB block was uploaded to the object store.
+
+How it **works**:
+- `cortex_parquet_converter_convert_block_delay_minutes` measures the time from the upload of the block (the `meta.json` modification time) to the end of its conversion. Its top bucket is 300 minutes, so all delays above 5 hours are in the `+Inf` bucket.
+- The delay is only recorded when a conversion succeeds. If the converter stops converting, this alert stops firing. Use [`CortexParquetConverterNotConverting`](#cortexparquetconverternotconverting) for that case.
+- A long delay is expected for blocks that the compactor uploads hours after their time range, for example after a backfill or after compaction was blocked.
+
+How to **investigate**:
+- Check if the compactor is behind. A block can only be converted after the compactor has compacted it past the first block range.
+- Check if the parquet converter is busy with one large tenant, on the `Cortex / Parquet` dashboard.
+- Scale out the parquet converter, or give it more CPU and disk, if it cannot keep up.
+
+### CortexParquetConverterRingUnhealthy
+
+This alert fires when the parquet converter ring has unhealthy members for 15 minutes. The blocks of the tenants that an unhealthy member owns are not converted.
+
+How to **investigate**:
+- Open the parquet converter ring page (`/parquet-converter/ring`) and find the unhealthy members.
+- If a parquet converter pod was deleted without leaving the ring, remove its entry with the "Forget" button.
+- If the pod is running, check its logs for errors with the ring key-value store.
+
+### CortexParquetQueryableMostlyTSDB
+
+This alert fires when more than 70% of the blocks that the parquet queryable finds in the queriers and rulers are TSDB blocks, for 2 hours. TSDB blocks are read from the store-gateways in place of the parquet files.
+
+How it **works**:
+- Blocks that are not wider than the first block range are never converted, so queries for recent data always read TSDB blocks. A query load with many short-range queries can make this alert fire when parquet is working.
+
+How to **investigate**:
+- Check the `Cortex / Parquet` dashboard for tenants with many unconverted blocks.
+- Check [`CortexParquetConverterNotConverting`](#cortexparquetconverternotconverting) and [`CortexParquetCompactionStuckAtFirstRange`](#cortexparquetcompactionstuckatfirstrange).
+- Check the time range of the queries. If most queries read only recent data, the TSDB blocks are expected.
+
+### CortexParquetCompactionStuckAtFirstRange
+
+This alert fires when more than 80% of the blocks of a tenant with more than 500 blocks are neither parquet blocks nor due for conversion, for 6 hours.
+
+How it **works**:
+- The parquet converter only converts blocks that are wider than the first `-compactor.block-ranges` range. The blocks that the ingesters upload are not wider than that range, so they are converted only after the compactor compacts them.
+- If the compactor cannot compact a tenant, its blocks stay at the first range. Then `cortex_bucket_parquet_unconverted_blocks_count` is 0 and the parquet alerts do not fire, but almost nothing is converted.
+- The alert can also fire just after parquet conversion is enabled for a tenant with a long retention, until the compactor and the converter catch up.
+
+How to **investigate**:
+- Check `cortex_compactor_remaining_planned_compactions` for the tenant. A value that stays above 0 means the compactor cannot finish the planned compactions.
+- Check [`CortexCompactorHasNotSuccessfullyRunCompaction`](#cortexcompactorhasnotsuccessfullyruncompaction) and the compactor logs for the tenant.
+- Check the disk use of the compactors. The compactor downloads all source blocks of a compaction job to its local disk. For a tenant with many ingesters, one job at the first range can need hundreds of GiB. A failed job keeps its downloaded blocks on disk until a compaction run for any tenant on that compactor succeeds, so failures can fill the disk.
+- Check the memory use of the compactors for out-of-memory kills.
+
 ### CortexQueriesIncorrect
 
 _TODO: this playbook has not been written yet._
